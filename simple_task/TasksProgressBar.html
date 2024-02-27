@@ -1223,13 +1223,12 @@
       }
       console.log(case_progress(i).toFixed(0).toString() + ' %');
       console.log(case_list.length, case_progress(i).toFixed(0), (case_progress(i).toFixed(0)/case_list.length.toFixed(0).toString() + ' %'));
-      var id = setInterval(frame, 10);
       width =  (case_progress(i).toFixed(0)/case_list.length).toFixed(0);
       elem.style.width = width + '%'; 
-      console.log(width);
+      console.log("sad", width, elem.style.width);
     }
   }
-  
+
   function move() {
     var elem = document.getElementById("myBar");   
     var width = 1;
