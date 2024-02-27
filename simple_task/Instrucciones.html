@@ -1,0 +1,78 @@
+{{ block title }}
+Instrucciones
+{{ endblock }}
+
+{{ block content }}
+Ponte en la posición de ser un agente de seguros de la compañía <b>"InsureZ"</b> especializada en seguros automovilísticos.
+Como tal, su tarea principal es procesar los reclamos de seguros completando datos importantes y verificar si el
+reclamo debe ser cubierto o no por el seguro.<br>
+<br>
+Los reclamos llegan a una bandeja de entrada indicando si son de carácter urgente o no urgente (regular).
+Los tiempos de respuesta en el negocio de seguros son críticos y son el factor principal para decidir
+la calidad de un proveedor de seguros.<br>
+<br>
+Por esta razón, la compañía "Insure Z" estableció como política que si las tareas son urgentes,
+debe procesar el reclamo en 16 minutos antes de que llegue a la bandeja de entrada.
+Si estos son regulares (no urgentes), debe procesar el reclamo dentro de los 20 minutos posteriores a la llegada a la bandeja de entrada.<br>
+<br>
+Cualquier reclamo que logres verificar en la bandeja de entrada se transferirá automáticamente a tu cola visible o
+Trabajo en progreso (WIP). Debe leer atentamente el reclamo y decidir.<br>
+<br>
+En cualquier momento, es posible que revise su correo electrónico para ver si llega alguna tarea nueva.
+Recuerde que esto es importante ya que los tiempos de respuesta cuentan desde el momento en que el reclamo
+llega a la bandeja de entrada y debe conocer los reclamos que debe completar y priorizar.<br>
+<br>
+Tu puntuación:<br>
+<br>
+
+Por cada reclamo urgente que termine dentro del tiempo asignado (16 minutos) se le otorgarán 25 puntos.<br>
+<br>
+Si se demora más del tiempo asignado, se le otorgarán 10 puntos.<br>
+<br>
+Por cada reclamo regular, dentro del tiempo asignado(20 minutos) recibirá 5 puntos. Si se demora más del tiempo asignado, se le otorgarán 2 puntos.<br>
+<br>
+Los reclamos regulares completadas después del tiempo asignado le otorgaron 2 puntos.<br>
+
+<br>
+Tenga cuidado de responder correctamente,
+porque por cada error se le restará 1 punto.<br>
+<br>
+La siguiente tabla resume esto:<br>
+<br>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Condición</th>
+      <th>Puntaje</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <ul>
+          <li>Reclamo urgente completada en 16 minutos</li>
+          <li>Reclamo regular completada en 20 minutos</li>
+          <li>Reclamo urgente completada después de 16 minutos</li>
+          <li>Reclamo regular completada después de 20 minutos</li>
+          <li>Error por cada respuesta</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>+ 25</li>
+          <li>+ 10</li>
+          <li>+ 5</li>
+          <li>+ 2</li>
+          <li>- 1</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<button class="otree-btn-next btn btn-success">
+  Siguiente
+</button>
+
+{{ endblock }}

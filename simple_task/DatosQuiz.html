@@ -1,0 +1,28 @@
+{{ block title }}
+Datos del participante
+{{ endblock }}
+
+{{ block content }}
+<div>
+  <div class="col">
+    <h4>Completa tus datos</h4>
+    <div class="mb-3">
+      <label for="formGroupExampleInput" class="form-label">{{ form.datos_quiz_name.label}}</label>
+      {{ form.datos_quiz_name }}
+    </div>
+    <div class="mb-3">
+      <label for="formGroupExampleInput" class="form-label">{{ form.datos_quiz_age.label }}</label>
+      {{ form.datos_quiz_age }}
+    </div>
+    <div class="mb-3">
+      <label for="formGroupExampleInput" class="form-label">{{ form.datos_quiz_gender.label }}</label>
+      {{ form.datos_quiz_gender }}
+    </div>
+  </div>
+</div>
+
+<button class="otree-btn-next btn btn-success">
+  Siguiente
+</button>
+
+{{ endblock }}

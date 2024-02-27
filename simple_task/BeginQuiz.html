@@ -1,0 +1,37 @@
+{{ block title }}
+
+{{ endblock }}
+
+{{ block content }}
+<div>
+    <div class="col">
+        <h4>Por favor, responde qué tan frecuentemente aplica las siguientes afirmaciones en tu caso. </h4>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col" style="text-align: center; min-width: 90px;">Ningún día</th>
+      <th scope="col" style="text-align: center; min-width: 90px;">Varios días</th>
+      <th scope="col" style="text-align: center; min-width: 90px;">Más de la mitad de los días</th>
+      <th scope="col" style="text-align: center; min-width: 90px;">Casi todos los días</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ for field in form }}
+    <tr>
+      <td>{{ field.label }}</td>
+      {{ for choice in field }}
+      <td style="text-align: center; min-width: 90px;">
+        {{ choice }} {{choice.label}}
+      </td>
+      {{ endfor }}
+    </tr>
+    {{ endfor }}
+  </tbody>
+</table>
+
+<button class="otree-btn-next btn btn-success">
+  Siguiente
+</button>
+
+{{ endblock }}
