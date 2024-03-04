@@ -65,12 +65,16 @@
     background-color: #4CAF50 !important;
   }
 </style>
+
+<!-- Seccion de barra de progreso -->
 <div style="width: 100%; border-color: #212529; border-width: 1px; border-style: dashed">
     <div id="myBar" class="w3-green" style="height:24px;width:0"></div>
 </div>
 <div style="padding-top: 24px;"></div>
+
+<!-- Seccion de tiempo restante y lista de casos -->
 <div class="row">
-    
+
   <div class="col-12 open-inbox">
     
     <!-- <div class="side-section">
@@ -123,7 +127,8 @@
 <!-- <script type="module" src="caseList.js"></script> -->
 
 <script>
-    
+
+  // Template de casos simples
   var simple_template = `
     <div id="case-{case_id}" class="case">
         <div class="case-section">
@@ -446,6 +451,7 @@
       </div>
   `;
 
+  // Template de casos complejos
   var complex_template = `
   <div id="case-{case_id}" class="case">
       <div class="case-section">
@@ -813,7 +819,7 @@
   `;
 
 
-//   var case_list = caseList;
+  // Lista de casos
   var case_list = [
     {
       "Asunto": "CASO 8484 - RECLAMO",
@@ -975,7 +981,7 @@
 
   ];
 
-
+  // Variables inicializadas
   let start_time = Date.now();
   let end_time = null;
 
@@ -990,7 +996,7 @@
 
   let unread_msg = 0;
 
-
+  // Construye y renderiza la lista de casos
   function build_case() {
     var case_container = document.getElementById('case-container');
     case_container.innerHTML = '';
@@ -1017,6 +1023,13 @@
     }
   }
 
+  // Construye un input por cada caso para almacenar datos como 
+  // Urgencia: si el caso es complejo o no
+  // Hora de inicio: tiempo de envio del caso
+  // Hora fin: hora en que se resulve el caso con todas las respuestas correctas
+  // Hora de solucion: Hora en que se empieza a resolver el caso (Ingreso de datos en el input)
+  // Cantidad de errores: Cantidad de errores de cada caso
+
   function build_extra() {
     var extra_container = document.getElementById('extra-container');
     var extra_template =  `
@@ -1033,6 +1046,8 @@
     }
   }
 
+  // Rendirza el temporizador en cuenta regresiva
+  // El limite de tiempo se define en timeout_seconds de la pagina TasksProgressBar
   function build_timer() {
     $('.otree-timer').hide();
     document.addEventListener("DOMContentLoaded", function (event) {
@@ -1051,6 +1066,25 @@
     });
   }
 
+  // Retorna la hora en que se cumple el tiempo de envio del caso.
+  function case_send_time(id) {
+    let temp_time = new Date(start_time + case_list[id].TiempoEnvio * 1000);
+    timeHours = temp_time.getHours();
+    timeMinutes = temp_time.getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
+    return timeHours + ':' + timeMinutes;
+  }
+
+  //Funcion que crea una alerta con el asunto del caso y tiempo de envio.
+  function create_alert(id) {
+    alert(case_send_time(id) + ' - ' + case_list[id].Asunto);
+    inbox = id;
+
+    let unread_msg_elem = document.getElementById('unread-msg');
+    unread_msg_elem.style.display = 'block'
+    unread_msg_elem.innerHTML = ++unread_msg;
+  }
+
+  // Renderiza alertas por cada caso cuando se cumple su tiempo de envio
   function build_alert() {
     for (var i = 1; i < case_list.length; i++) {
       var case_value = case_list[i];
@@ -1066,6 +1100,129 @@
     start_date_elem.value = start_time;
   }
 
+  // Genera una array con las respuestas de un caso en especifico
+  function case_result(id) {
+    let case_elem = document.getElementById('case-' + (id + 1).toString());
+    let input_list = case_elem.getElementsByTagName('input');
+    let ans_list = [];
+
+    let item_id_prev = '';
+    let item_value_prev = -1;
+
+    for (var i = 0; i < input_list.length; i++) {
+      let input_item = input_list[i];
+      if (input_item.id.search('-') == -1) {
+        if (item_id_prev != '') {
+          ans_list.push(item_value_prev);
+          item_value_prev = -1;
+          item_id_prev = '';
+        }
+        if (input_item.type == 'date' && input_item.value != '') {
+          let date_item = input_item.value.split('-');
+          ans_list.push(date_item[2] + '/' + date_item[1] + '/' + date_item[0]);
+        } else {
+          ans_list.push(input_item.value);
+        }
+      } else {
+        let item_id = input_item.id.split('-')[0];
+        let sub_item_id = input_item.id.split('-')[1];
+
+        if (item_id_prev == '') {
+          item_id_prev = item_id;
+        }
+
+        if (item_id_prev != item_id) {
+          ans_list.push(item_value_prev);
+          item_value_prev = -1;
+          item_id_prev = item_id;
+        }
+
+        if (input_item.checked) {
+          item_value_prev = input_item.value;
+        }
+      }
+    }
+    if (item_id_prev != '') {
+      ans_list.push(item_value_prev);
+      item_value_prev = -1;
+      item_id_prev = '';
+    }
+
+    input_list = case_elem.getElementsByTagName('textarea');
+
+    for (var i = 0; i < input_list.length; i++) {
+      let input_item = input_list[i];
+      ans_list.push(input_item.value);
+    }
+
+    return ans_list;
+  }
+
+  // Calcula el progreso de un caso y retorna el porcentaje de avance en base a la cantidad de respuestas ingresadas
+  function case_progress(id) {
+    let result = case_result(id);
+    let progress = 0;
+    for (var i = 0; i < result.length; i++) {
+      if (result[i].toString() != '' && result[i].toString() != '-1') {
+        progress++;
+      }
+    }
+    return progress * 100.0 / result.length;
+  }
+
+  // Actualiza el UI del progreso de las tareas y los muestra en % y barra de progreso
+  function update_wip() {
+    let wip_elem = document.getElementById('wip-group');
+    let work_elem = `
+      <li class="list-group-item wip-elem" onclick="open_case({case-id})">
+        <p>{work-prog}</p>
+        <p>{case-msg}</p>
+      </li>
+    `;
+    wip_elem.innerHTML = '';
+    var width = 1;
+    var elem = document.getElementById("myBar");   
+
+    for (var i = 0; i <= wip; i++) {
+      if (case_list[i].Visible) {
+      let work_copy_elem = work_elem;
+      work_copy_elem = work_copy_elem.replaceAll('{case-id}', i);
+      work_copy_elem = work_copy_elem.replaceAll('{case-msg}', case_list[i].Asunto);
+      work_copy_elem = work_copy_elem.replaceAll('{work-prog}', case_progress(i).toFixed(0).toString() + ' %');
+      wip_elem.innerHTML += work_copy_elem;
+      }
+      console.log(case_progress(i).toFixed(0).toString() + ' %');
+      console.log(case_list.length, case_progress(i).toFixed(0), (case_progress(i).toFixed(0)/case_list.length.toFixed(0).toString() + ' %'));
+      var id = setInterval(frame, 10);
+      width =  (case_progress(i).toFixed(0)/case_list.length).toFixed(0);
+      elem.style.width = width + '%'; 
+      /* console.log(width); */
+    }
+  }
+
+  // Funcion que se ejecuta al ingresar un valor en los campos de un caso.
+  // Actualiza el tiempo de solución del caso (hora de inicio - hora actual) cuando se ingresa un valor por primera
+  // vez en los campos del caso, registra el tiempo en segundos.
+  // Actualiza el trabajo en curso.
+  function input_event(input_name, id) {
+    //Se retira el mensaje de error del input cuando se esta ingresando un valor
+    var question_error_elem = document.getElementById(input_name + '-error');
+    question_error_elem.style.display = 'none';
+  
+    if (case_list[id].TiempoSolucion == 0) {
+      var solution_elem = document.getElementById('case_' + (id + 1).toString() + '_solution_time');
+      var solution_time = (Date.now() - start_time) / 1000;
+
+      case_list[id].TiempoSolucion = solution_time;
+      solution_elem.value = solution_time;
+
+      create_intr(id) 
+    }
+
+    update_wip();
+  }
+
+ // Asigna la funcion input_event a los campos de cada caso
   function build_event() {
     let input_list = [];
     for (var i = 0; i < case_list.length; i++) {
@@ -1083,6 +1240,7 @@
     }
   }
 
+  // Funcion principal que renderiza el UI y ejecuta las funciones
   function build_page() {
     build_case();
     build_extra();
@@ -1092,15 +1250,6 @@
     update_inbox();
     update_wip();
     open_case(0);
-  }
-
-  function create_alert(id) {
-    alert(case_send_time(id) + ' - ' + case_list[id].Asunto);
-    inbox = id;
-
-    let unread_msg_elem = document.getElementById('unread-msg');
-    unread_msg_elem.style.display = 'block'
-    unread_msg_elem.innerHTML = ++unread_msg;
   }
 
   function create_intr(id) {
@@ -1201,35 +1350,6 @@
     }
   }
 
-  function update_wip() {
-    let wip_elem = document.getElementById('wip-group');
-    let work_elem = `
-      <li class="list-group-item wip-elem" onclick="open_case({case-id})">
-        <p>{work-prog}</p>
-        <p>{case-msg}</p>
-      </li>
-    `;
-    wip_elem.innerHTML = '';
-    var width = 1;
-    var elem = document.getElementById("myBar");   
-
-    for (var i = 0; i <= wip; i++) {
-      if (case_list[i].Visible) {
-      let work_copy_elem = work_elem;
-      work_copy_elem = work_copy_elem.replaceAll('{case-id}', i);
-      work_copy_elem = work_copy_elem.replaceAll('{case-msg}', case_list[i].Asunto);
-      work_copy_elem = work_copy_elem.replaceAll('{work-prog}', case_progress(i).toFixed(0).toString() + ' %');
-      wip_elem.innerHTML += work_copy_elem;
-      }
-      console.log(case_progress(i).toFixed(0).toString() + ' %');
-      console.log(case_list.length, case_progress(i).toFixed(0), (case_progress(i).toFixed(0)/case_list.length.toFixed(0).toString() + ' %'));
-      var id = setInterval(frame, 10);
-      width =  (case_progress(i).toFixed(0)/case_list.length).toFixed(0);
-      elem.style.width = width + '%'; 
-      console.log(width);
-    }
-  }
-  
   function move() {
     var elem = document.getElementById("myBar");   
     var width = 1;
@@ -1244,87 +1364,7 @@
     }
   }
   
-  function input_event(input_name, id) {
-    var question_error_elem = document.getElementById(input_name + '-error');
-    question_error_elem.style.display = 'none';
-
-    if (case_list[id].TiempoSolucion == 0) {
-      var solution_elem = document.getElementById('case_' + (id + 1).toString() + '_solution_time');
-      var solution_time = (Date.now() - start_time) / 1000;
-
-      case_list[id].TiempoSolucion = solution_time;
-      solution_elem.value = solution_time;
-
-      create_intr(id)
-    }
-
-    update_wip();
-  }
-
-  function case_send_time(id) {
-    let temp_time = new Date(start_time + case_list[id].TiempoEnvio * 1000);
-    timeHours = temp_time.getHours();
-    timeMinutes = temp_time.getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-    return timeHours + ':' + timeMinutes;
-  }
-
-  function case_result(id) {
-    let case_elem = document.getElementById('case-' + (id + 1).toString());
-    let input_list = case_elem.getElementsByTagName('input');
-    let ans_list = [];
-
-    let item_id_prev = '';
-    let item_value_prev = -1;
-
-    for (var i = 0; i < input_list.length; i++) {
-      let input_item = input_list[i];
-      if (input_item.id.search('-') == -1) {
-        if (item_id_prev != '') {
-          ans_list.push(item_value_prev);
-          item_value_prev = -1;
-          item_id_prev = '';
-        }
-        if (input_item.type == 'date' && input_item.value != '') {
-          let date_item = input_item.value.split('-');
-          ans_list.push(date_item[2] + '/' + date_item[1] + '/' + date_item[0]);
-        } else {
-          ans_list.push(input_item.value);
-        }
-      } else {
-        let item_id = input_item.id.split('-')[0];
-        let sub_item_id = input_item.id.split('-')[1];
-
-        if (item_id_prev == '') {
-          item_id_prev = item_id;
-        }
-
-        if (item_id_prev != item_id) {
-          ans_list.push(item_value_prev);
-          item_value_prev = -1;
-          item_id_prev = item_id;
-        }
-
-        if (input_item.checked) {
-          item_value_prev = input_item.value;
-        }
-      }
-    }
-    if (item_id_prev != '') {
-      ans_list.push(item_value_prev);
-      item_value_prev = -1;
-      item_id_prev = '';
-    }
-
-    input_list = case_elem.getElementsByTagName('textarea');
-
-    for (var i = 0; i < input_list.length; i++) {
-      let input_item = input_list[i];
-      ans_list.push(input_item.value);
-    }
-
-    return ans_list;
-  }
-
+  // Retorna una lista con los nombres de las preguntas de un caso en especifico
   function case_question(id) {
     let case_elem = document.getElementById('case-' + (id + 1).toString());
     let input_list = case_elem.getElementsByTagName('input');
@@ -1353,17 +1393,9 @@
     return question_list;
   }
 
-  function case_progress(id) {
-    let result = case_result(id);
-    let progress = 0;
-    for (var i = 0; i < result.length; i++) {
-      if (result[i].toString() != '' && result[i].toString() != '-1') {
-        progress++;
-      }
-    }
-    return progress * 100.0 / result.length;
-  }
 
+  // Valida si las respuestas de un caso son correctas y retorna true/false 
+  // Muestra una alerta en cada pregunta en caso sea incorrecta
   function case_validate(id, show_alert=true) {
     let result = case_result(id);
     let question = case_question(id);
@@ -1385,14 +1417,15 @@
     return is_correct;
   }
    
+  // Funcion que se ejecuta con el boton "validar caso" 
+  // Renderiza un mensaje de respuestas correctas o incorrectas segun lo que se obtenga de case_validate() (true/false)
   function case_validate_button(case_id) {
+    
     if (case_validate(case_id - 1)) {
       let correct_elem = document.getElementById('alert-correct-answer');
       correct_elem.style.display = 'block';
       //case_list.splice(case_id - 1, 1);
-      console.log(case_list);
-      console.log("palabra");
-      console.log(case_id);
+     
       case_list[case_id -1].Visible = false
       update_wip();
       update_inbox();
@@ -1410,7 +1443,7 @@
         }
       }
       if (all_correct) {
-      console.log("hola")
+      
         var submit_elem = document.getElementById('submit-button');
         submit_elem.style.display = 'block';
 
@@ -1425,6 +1458,9 @@
     }
   }
 
+  // Funcion que se ejecuta con el boton "Siguiente" 
+  // Valida las respuestas de todos los casos y en caso haya errores lo almacena en el input error de cada caso.
+  // En caso no haya errores almacena la hora en que se termino en el input end_date
   function validate_answers() {
     let error_count = 0
     for (var i = 0; i < case_list.length; i++) {
@@ -1459,6 +1495,7 @@
   Las respuestas estan correctas
 </div>
 
+<!-- Boton se muestra cuando todos los casos se respondieron de forma correcta -->
 <button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
   Siguiente
 </button>
