@@ -1350,6 +1350,34 @@
     }
   }
 
+  function update_wip() {
+    let wip_elem = document.getElementById('wip-group');
+    let work_elem = `
+      <li class="list-group-item wip-elem" onclick="open_case({case-id})">
+        <p>{work-prog}</p>
+        <p>{case-msg}</p>
+      </li>
+    `;
+    wip_elem.innerHTML = '';
+    var width = 1;
+    var elem = document.getElementById("myBar");   
+
+    for (var i = 0; i <= wip; i++) {
+      if (case_list[i].Visible) {
+      let work_copy_elem = work_elem;
+      work_copy_elem = work_copy_elem.replaceAll('{case-id}', i);
+      work_copy_elem = work_copy_elem.replaceAll('{case-msg}', case_list[i].Asunto);
+      work_copy_elem = work_copy_elem.replaceAll('{work-prog}', case_progress(i).toFixed(0).toString() + ' %');
+      wip_elem.innerHTML += work_copy_elem;
+      }
+      console.log(case_progress(i).toFixed(0).toString() + ' %');
+      console.log(case_list.length, case_progress(i).toFixed(0), (case_progress(i).toFixed(0)/case_list.length.toFixed(0).toString() + ' %'));
+      width =  (case_progress(i).toFixed(0)/case_list.length).toFixed(0);
+      elem.style.width = width + '%'; 
+      console.log("sad", width, elem.style.width);
+    }
+  }
+
   function move() {
     var elem = document.getElementById("myBar");   
     var width = 1;
