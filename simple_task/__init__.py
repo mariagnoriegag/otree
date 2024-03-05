@@ -908,6 +908,34 @@ class TaskTest(Page):
     ]
     pass
 
+class TasksCalibration(Page):    
+    timeout_seconds = 20 * 60
+    form_model = 'player'
+    form_fields = [
+        'case_1_step_1_nombre', 'case_1_step_1_apellido', 'case_1_step_1_codigo', 'case_1_step_1_tipo_seguro', 'case_1_step_1_fecha_vencimiento', 'case_1_step_2_1', 'case_1_step_3_1', 'case_1_step_4_1',
+        'case_2_step_1_nombre', 'case_2_step_1_apellido', 'case_2_step_1_codigo', 'case_2_step_1_tipo_seguro', 'case_2_step_1_fecha_vencimiento', 'case_2_step_2_1', 'case_2_step_3_1', 'case_2_step_4_1',
+        'case_3_step_1_nombre', 'case_3_step_1_apellido', 'case_3_step_1_codigo', 'case_3_step_1_tipo_seguro', 'case_3_step_1_fecha_vencimiento', 'case_3_step_2_1','case_3_step_3_1', 'case_3_step_4_1',
+        'case_6_step_1_nombre', 'case_6_step_1_apellido', 'case_6_step_1_codigo', 'case_6_step_1_tipo_seguro', 'case_6_step_1_fecha_vencimiento', 'case_6_step_2_1', 'case_6_step_3_1', 'case_6_step_4_1',
+        'case_8_step_1_nombre', 'case_8_step_1_apellido', 'case_8_step_1_codigo', 'case_8_step_1_tipo_seguro', 'case_8_step_1_fecha_vencimiento', 'case_8_step_2_1', 'case_8_step_3_1', 'case_8_step_4_1',
+        'case_10_step_1_nombre', 'case_10_step_1_apellido', 'case_10_step_1_codigo', 'case_10_step_1_tipo_seguro', 'case_10_step_1_fecha_vencimiento', 'case_10_step_2_1', 'case_10_step_3_1', 'case_10_step_4_1',
+        'case_11_step_1_nombre', 'case_11_step_1_apellido', 'case_11_step_1_codigo', 'case_11_step_1_tipo_seguro', 'case_11_step_1_fecha_vencimiento', 'case_11_step_2_1', 'case_11_step_3_1', 'case_11_step_4_1',
+
+        'case_4_step_1_nombre', 'case_4_step_1_apellido', 'case_4_step_1_codigo', 'case_4_step_1_tipo_seguro', 'case_4_step_1_fecha_vencimiento', 'case_4_step_2_1', 'case_4_step_3_1', 'case_4_step_4_propietario',  'case_4_step_4_placa', 'case_4_step_5_1', 'case_4_step_6_1',
+        'case_5_step_1_nombre', 'case_5_step_1_apellido', 'case_5_step_1_codigo', 'case_5_step_1_tipo_seguro', 'case_5_step_1_fecha_vencimiento', 'case_5_step_2_1', 'case_5_step_3_1', 'case_5_step_4_propietario','case_5_step_4_placa', 'case_5_step_5_1', 'case_5_step_6_1',
+        'case_7_step_1_nombre', 'case_7_step_1_apellido', 'case_7_step_1_codigo', 'case_7_step_1_tipo_seguro', 'case_7_step_1_fecha_vencimiento', 'case_7_step_2_1',  'case_7_step_3_1', 'case_7_step_4_propietario',  'case_7_step_4_placa', 'case_7_step_5_1', 'case_7_step_6_1',
+        'case_9_step_1_nombre', 'case_9_step_1_apellido', 'case_9_step_1_codigo', 'case_9_step_1_tipo_seguro', 'case_9_step_1_fecha_vencimiento', 'case_9_step_2_1', 'case_9_step_3_1', 'case_9_step_4_propietario', 'case_9_step_4_placa', 'case_9_step_5_1', 'case_9_step_6_1',
+        'case_12_step_1_nombre', 'case_12_step_1_apellido', 'case_12_step_1_codigo', 'case_12_step_1_tipo_seguro', 'case_12_step_1_fecha_vencimiento', 'case_12_step_2_1', 'case_12_step_3_1', 'case_12_step_4_propietario', 'case_12_step_4_placa', 'case_12_step_5_1', 'case_12_step_6_1',
+        
+        'case_1_urgent', 'case_2_urgent', 'case_3_urgent', 'case_4_urgent', 'case_5_urgent', 'case_6_urgent', 'case_7_urgent', 'case_8_urgent', 'case_9_urgent', 'case_10_urgent', 'case_11_urgent', 'case_12_urgent',
+        'case_1_start_time', 'case_2_start_time', 'case_3_start_time', 'case_4_start_time', 'case_5_start_time', 'case_6_start_time', 'case_7_start_time', 'case_8_start_time', 'case_9_start_time', 'case_10_start_time', 'case_11_start_time', 'case_12_start_time',
+        'case_1_end_time', 'case_2_end_time', 'case_3_end_time', 'case_4_end_time', 'case_5_end_time', 'case_6_end_time', 'case_7_end_time', 'case_8_end_time', 'case_9_end_time', 'case_10_end_time', 'case_11_end_time', 'case_12_end_time',
+        'case_1_solution_time', 'case_2_solution_time', 'case_3_solution_time', 'case_4_solution_time', 'case_5_solution_time', 'case_6_solution_time', 'case_7_solution_time', 'case_8_solution_time', 'case_9_solution_time', 'case_10_solution_time', 'case_11_solution_time', 'case_12_solution_time',
+        'case_1_error_count', 'case_2_error_count', 'case_3_error_count', 'case_4_error_count', 'case_5_error_count', 'case_6_error_count', 'case_7_error_count', 'case_8_error_count', 'case_9_error_count', 'case_10_error_count', 'case_11_error_count', 'case_12_error_count',
+        'list_intr_id', 'list_intr_time',
+        'start_date', 'end_date'
+    ]
+    pass
+
 #pagina de ingreso de datos del participante
 class DatosQuiz(Page):
     form_model = 'player'
@@ -962,6 +990,6 @@ class FlowQuiz(Page):
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
 # page_sequence = [Task]
-page_sequence = [TaskTest]
+page_sequence = [TasksCalibration]
 
 # aplicar la barra de progreso
