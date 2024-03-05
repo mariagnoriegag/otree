@@ -244,27 +244,151 @@ class Player(BasePlayer):
         label='13. Me preocupé en fallar'
     )
 
+    ## TEST CASE 1 - SIMPLE
+    #Definicion de campos - formulario 1
+    test_case_1_step_1_nombre = models.StringField()
+    test_case_1_step_1_apellido = models.StringField()
+    test_case_1_step_1_codigo = models.StringField()
+    test_case_1_step_1_tipo_seguro = models.StringField()
+    test_case_1_step_1_fecha_vencimiento = models.StringField()
+
+    #Creacion de campos enteros pregunta 2
+    test_case_1_step_2_1 = models.IntegerField(
+        choices=[[1, 'Si'], [2, 'No']],
+        widget=widgets.RadioSelectHorizontal
+    )
+
+    # Creacion de campos enteros pregunta 3
+    test_case_1_step_3_1 = models.IntegerField(
+        choices=[[1, 'Si'], [2, 'No']],
+        widget=widgets.RadioSelectHorizontal
+    )
+    # Creacion de campos enteros pregunta 4
+    test_case_1_step_4_1 = models.IntegerField(
+        choices=[
+            [1, 'El reclamo es aceptado'],
+            [2, 'El reclamo es rechazado']
+        ],
+        widget=widgets.RadioSelect
+    )
+
+    ## TEST CASE 2 - COMPLEX
+    test_case_2_step_1_nombre = models.StringField()
+    test_case_2_step_1_apellido = models.StringField()
+    test_case_2_step_1_codigo = models.StringField()
+    test_case_2_step_1_tipo_seguro = models.StringField()
+    test_case_2_step_1_fecha_vencimiento = models.StringField()
+
+    test_case_2_step_2_1 = models.IntegerField(
+        choices=[[1, 'Si'], [2, 'No']],
+        widget=widgets.RadioSelectHorizontal
+    )
+
+    test_case_2_step_3_1 = models.IntegerField(
+        choices=[[1, 'Si'], [2, 'No']],
+        widget=widgets.RadioSelectHorizontal
+    )
+
+    test_case_2_step_4_propietario = models.StringField()
+    test_case_2_step_4_placa = models.StringField()
+
+    test_case_2_step_5_1 = models.IntegerField(
+        choices=[
+            [1, 'Sí, la información proporcionada en el reclamo es consistente con el Informe Técnico.'],
+            [2, 'No, la información proporcionada en el reclamo es inconsistente con el Informe Técnico.']
+        ],
+        widget=widgets.RadioSelect
+    )
+
+    test_case_2_step_6_1 = models.IntegerField(
+        choices=[
+            [1, 'El reclamo es aceptado'],
+            [2, 'El reclamo es rechazado']
+        ],
+        widget=widgets.RadioSelect
+    )
+
+     ## TEST CASE 3 - SIMPLE
+    #Definicion de campos - formulario 1
+    test_case_3_step_1_nombre = models.StringField()
+    test_case_3_step_1_apellido = models.StringField()
+    test_case_3_step_1_codigo = models.StringField()
+    test_case_3_step_1_tipo_seguro = models.StringField()
+    test_case_3_step_1_fecha_vencimiento = models.StringField()
+
+    #Creacion de campos enteros pregunta 2
+    test_case_3_step_2_1 = models.IntegerField(
+        choices=[[1, 'Si'], [2, 'No']],
+        widget=widgets.RadioSelectHorizontal
+    )
+
+    # Creacion de campos enteros pregunta 3
+    test_case_3_step_3_1 = models.IntegerField(
+        choices=[[1, 'Si'], [2, 'No']],
+        widget=widgets.RadioSelectHorizontal
+    )
+    # Creacion de campos enteros pregunta 4
+    test_case_3_step_4_1 = models.IntegerField(
+        choices=[
+            [1, 'El reclamo es aceptado'],
+            [2, 'El reclamo es rechazado']
+        ],
+        widget=widgets.RadioSelect
+    )
+
+    ## TEST EXTRA METRICS
+
+    #Definicion para registrar inicio y fin de tareas
+    test_start_date = models.StringField()
+    test_end_date = models.StringField()
+
+    #Definicion de casos urgentes / booleano
+    test_case_1_urgent = models.BooleanField()
+    test_case_2_urgent = models.BooleanField()
+    test_case_3_urgent = models.BooleanField()
+
+    #Deficion de tiempo de inicio
+    test_case_1_start_time = models.StringField()
+    test_case_2_start_time = models.StringField()
+    test_case_3_start_time = models.StringField()
+
+    #Definicion de tiempo de finalización de tareas
+    test_case_1_end_time = models.StringField()
+    test_case_2_end_time = models.StringField()
+    test_case_3_end_time = models.StringField()
+
+    test_case_1_solution_time = models.StringField()
+    test_case_2_solution_time = models.StringField()
+    test_case_3_solution_time = models.StringField()
+
+    test_case_1_error_count = models.StringField()
+    test_case_2_error_count = models.StringField()
+    test_case_3_error_count = models.StringField()
+
+    test_list_intr_id = models.StringField()
+    test_list_intr_time = models.StringField()
+
 
     ## CASE 1 - SIMPLE
-#Definicion de campos - formulario 1
+    #Definicion de campos - formulario 1
     case_1_step_1_nombre = models.StringField()
     case_1_step_1_apellido = models.StringField()
     case_1_step_1_codigo = models.StringField()
     case_1_step_1_tipo_seguro = models.StringField()
     case_1_step_1_fecha_vencimiento = models.StringField()
 
-#Creacion de campos enteros pregunta 2
+    #Creacion de campos enteros pregunta 2
     case_1_step_2_1 = models.IntegerField(
         choices=[[1, 'Si'], [2, 'No']],
         widget=widgets.RadioSelectHorizontal
     )
 
-# Creacion de campos enteros pregunta 3
+    # Creacion de campos enteros pregunta 3
     case_1_step_3_1 = models.IntegerField(
         choices=[[1, 'Si'], [2, 'No']],
         widget=widgets.RadioSelectHorizontal
     )
-# Creacion de campos enteros pregunta 4
+    # Creacion de campos enteros pregunta 4
     case_1_step_4_1 = models.IntegerField(
         choices=[
             [1, 'El reclamo es aceptado'],
@@ -738,7 +862,6 @@ class Task(Page):
     ]
     pass
 
-# PAGES
 class TasksProgressBar(Page):    
     timeout_seconds = 30 * 60
     form_model = 'player'
@@ -764,6 +887,24 @@ class TasksProgressBar(Page):
         'case_1_error_count', 'case_2_error_count', 'case_3_error_count', 'case_4_error_count', 'case_5_error_count', 'case_6_error_count', 'case_7_error_count', 'case_8_error_count', 'case_9_error_count', 'case_10_error_count', 'case_11_error_count', 'case_12_error_count',
         'list_intr_id', 'list_intr_time',
         'start_date', 'end_date'
+    ]
+    pass
+
+class TaskTest(Page):    
+    form_model = 'player'
+    form_fields = [
+        'test_case_1_step_1_nombre', 'test_case_1_step_1_apellido', 'test_case_1_step_1_codigo', 'test_case_1_step_1_tipo_seguro', 'test_case_1_step_1_fecha_vencimiento', 'test_case_1_step_2_1', 'test_case_1_step_3_1', 'test_case_1_step_4_1',
+        'test_case_3_step_1_nombre', 'test_case_3_step_1_apellido', 'test_case_3_step_1_codigo', 'test_case_3_step_1_tipo_seguro', 'test_case_3_step_1_fecha_vencimiento', 'test_case_3_step_2_1','test_case_3_step_3_1', 'test_case_3_step_4_1',
+
+        'test_case_2_step_1_nombre', 'test_case_2_step_1_apellido', 'test_case_2_step_1_codigo', 'test_case_2_step_1_tipo_seguro', 'test_case_2_step_1_fecha_vencimiento', 'test_case_2_step_2_1', 'test_case_2_step_3_1', 'test_case_2_step_4_propietario',  'test_case_2_step_4_placa', 'test_case_2_step_5_1', 'test_case_2_step_6_1',
+        
+        'test_case_1_urgent', 'test_case_2_urgent', 'test_case_3_urgent',
+        'test_case_1_start_time', 'test_case_2_start_time', 'test_case_3_start_time', 
+        'test_case_1_end_time', 'test_case_2_end_time', 'test_case_3_end_time',
+        'test_case_1_solution_time', 'test_case_2_solution_time', 'test_case_3_solution_time',
+        'test_case_1_error_count', 'test_case_2_error_count', 'test_case_3_error_count',
+        'test_list_intr_id', 'test_list_intr_time',
+        'test_start_date', 'test_end_date'
     ]
     pass
 
@@ -821,6 +962,6 @@ class FlowQuiz(Page):
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
 # page_sequence = [Task]
-page_sequence = [TasksProgressBar]
+page_sequence = [TaskTest]
 
 # aplicar la barra de progreso
