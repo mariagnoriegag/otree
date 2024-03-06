@@ -93,7 +93,7 @@
 
   // Template de casos simples
   var simple_template = `
-    <div id="case-{case_id}" class="case">
+    <div id="case-{case_id}" class="case" style="display: none;">
         <div class="case-section">
           <h3>{case_asunto}</h3>
           <p>
@@ -404,18 +404,23 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12" style="text-align:right">
-              <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
-                Validar caso
-              </button>
-            </div>
-            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none;">
+            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none; margin-top: 24px;">
               Algunas respuestas estan mal
             </div>
 
-            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none;">
+            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none; margin-top: 24px;">
               Las respuestas estan correctas.
             </div>
+            
+            <div class="col-md-12" style="display: flex; gap: 24px; justify-content: flex-end; margin-top: 24px;">
+                  <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
+                    Validar caso
+                  </button>
+                  <button disabled type="button" id="next-case-btn-{case_id}" onclick="show_next_case({case_id})" class="btn btn-success">
+                    Siguiente caso
+                  </button>
+              </div>
+             
           </div>
         </div>
       </div>
@@ -423,7 +428,7 @@
 
   // Template de casos complejos
   var complex_template = `
-  <div id="case-{case_id}" class="case">
+  <div id="case-{case_id}" class="case" style="display: none;">
       <div class="case-section">
         <h3>{case_asunto}</h3>
         <p>
@@ -778,18 +783,23 @@
           </div>
         </div>
         <div class="row">
-            <div class="col-md-12" style="text-align:right">
-              <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
-                Validar caso
-              </button>
-            </div>
-            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none;">
+            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none; margin-top: 24px;">
               Algunas respuestas estan mal
             </div>
 
-            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none;">
+            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none; margin-top: 24px;">
               Las respuestas estan correctas.
             </div>
+            
+            <div class="col-md-12" style="display: flex; gap: 24px; justify-content: flex-end; margin-top: 24px;">
+                  <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
+                    Validar caso
+                  </button>
+                  <button disabled type="button" id="next-case-btn-{case_id}" onclick="show_next_case({case_id})" class="btn btn-success">
+                    Siguiente caso
+                  </button>
+              </div>
+             
           </div>
       </div>
     </div>
@@ -959,6 +969,35 @@
     }
   }
 
+
+    //Mostrar el primer caso
+    function show_case() {
+    if (case_list.length) {
+      var first_case = document.getElementById('case-1');
+      first_case.style.display = 'block';
+    }
+  }
+
+  //Mostrar el siguiente caso
+  function show_next_case(case_id) {
+    // Ocultar el caso actual
+    var first_case = document.getElementById('case-' + case_id.toString());
+    first_case.style.display = 'none';
+
+    // Mostrar el siguiente caso
+    let next_case_id =  case_id + 1
+    var next_case = document.getElementById('case-' + next_case_id.toString());
+    next_case.style.display = 'block';
+    window.scrollTo(0, 0);
+
+    // Ocultar el boton de Siguiente caso para el ultimo caso
+    if (case_list.length == case_id + 1) {
+      let next_case_id = case_id + 1
+      var next_case = document.getElementById('next-case-btn-'+ next_case_id.toString());
+      next_case.style.display = 'none';
+    }
+  }
+
   // Construye un input por cada caso para almacenar datos como 
   // Urgencia: si el caso es complejo o no
   // Hora de inicio: tiempo de envio del caso
@@ -1114,11 +1153,11 @@
   // Funcion principal que renderiza el UI y ejecuta las funciones
   function build_page() {
     build_case();
+    show_case()
     build_extra();
     build_timer();
     build_alert();
     build_event();
-    open_case(0);
   }
 
   function create_intr(id) {
@@ -1205,15 +1244,24 @@
   function case_validate_button(case_id) {
     
     if (case_validate(case_id - 1)) {
+      //Renderiza la alerta de respuestas correctas por 5 segundos
       let correct_elem = document.getElementById(case_id.toString() + '-alert-correct-answer');
       correct_elem.style.display = 'block';
+      setTimeout(function () { correct_elem.style.display = 'none'; }, 5 * 1000);
+
       //case_list.splice(case_id - 1, 1);
      
       case_list[case_id -1].Visible = false
 
-      setTimeout(function () { correct_elem.style.display = 'none'; }, 5 * 1000);
+      // Registra los el tiempo en que se resolvio el caso
       var end_elem = document.getElementById('case_' + case_id.toString() + '_end_time');
       end_elem.value = ((Date.now() - start_time) / 1000);
+      
+      // Habilita el boton de Siguiente caso
+      var next_case = document.getElementById('next-case-btn-' + case_id.toString());
+      next_case.disabled = false;
+
+      // Valida si todas las respuestas con correctas para mostrar el boton de Finalizar
       let all_correct = true;
       for (var i = 0; i < case_list.length; i++) {
         if (i == (case_id - 1)) {
@@ -1279,7 +1327,7 @@
 
 <!-- Boton se muestra cuando todos los casos se respondieron de forma correcta -->
 <button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
-  Siguiente
+  Finalizar
 </button>
 
 {{ endblock }}

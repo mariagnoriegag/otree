@@ -990,6 +990,6 @@ class FlowQuiz(Page):
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
 # page_sequence = [Task]
-page_sequence = [TaskTest, TasksCalibration]
+page_sequence = [TasksCalibration]
 
 # aplicar la barra de progreso
