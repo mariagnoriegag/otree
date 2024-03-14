@@ -944,6 +944,25 @@ class DatosQuiz(Page):
     ]
     pass
 
+class Results(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def vars_for_template(player):
+        case_end_times = []
+        count_non_empty = 0
+        for i in range(1, 13):
+            case_end_time = player.field_maybe_none(f'case_{i}_end_time')
+            case_end_times.append(case_end_time)
+            if case_end_time != "":
+                count_non_empty += 1
+        return dict(
+            case_end_times=case_end_times,
+            count_non_empty=count_non_empty
+        )
+    
+    pass
+
 #pagina de instrucciones
 
 class Instrucciones(Page):
@@ -975,6 +994,7 @@ class MultiQuiz(Page):
 
 class EndQuiz(Page):
     form_model = 'player'
+    
     form_fields = [
         'e_quiz_1', 'e_quiz_2', 'e_quiz_3', 'e_quiz_4', 'e_quiz_5', 'e_quiz_6', 'e_quiz_7'
     ]
@@ -990,6 +1010,6 @@ class FlowQuiz(Page):
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
 # page_sequence = [Task]
-page_sequence = [TasksCalibration]
+page_sequence = [TasksCalibration, Results]
 
 # aplicar la barra de progreso
