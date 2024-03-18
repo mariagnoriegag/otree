@@ -815,7 +815,6 @@ Casos de prueba
       "Respuestas": ["Vanessa", "Arteaga", "BXD-017", "Plan Regular", "01/05/2022", 2, 2, 2],
       "Visible": true
     },
-    
     {
       "Asunto": "CASO 8485 - RECLAMO",
       "Texto": "Estimados señores o señoras,<br><br>\n          El 5 de junio hice un viaje por carretera hacia el norte, choqué mi automóvil con otro automóvil y se\n          rompieron los parachoques. El choque se produjo de tarde y fue muy fuerte. Mi amigo y yo estábamos en el auto,\n          ambos salimos ilesos. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este tipo de accidentes.<br><br>\n          Quedo a la espera de su amable respuesta.<br>\n          Atentamente,<br>\n          Astrid Wilson",
@@ -1211,8 +1210,10 @@ Casos de prueba
 </div> -->
 
 <!-- Boton se muestra cuando todos los casos se respondieron de forma correcta -->
-<button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
-  Finalizar
-</button>
+<div class="d-flex flex-row-reverse">
+  <button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
+    Finalizar
+  </button>
+</div>
 
 {{ endblock }}

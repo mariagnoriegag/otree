@@ -3,20 +3,22 @@ Resultados
 {{ endblock }}
 
 {{ block content }}
-<div>
-  <div class="col">
-    <h4>La cantidad de casos resueltos son: {{ count_non_empty }}</h4>
-    
-  </div>
+
+<div class="col text-center" style="margin-top: 200px; margin-bottom: 200px;">
+  <h4>La cantidad de casos resueltos son:</h4>
+  <h2>{{ case_non_empty }}</h2>
 </div>
 
 <script>
 
 </script>
 
-<button class="otree-btn-next btn btn-success">
-  Siguiente
-</button>
+<div class="d-flex flex-row-reverse">
+  <button class="otree-btn-next btn btn-success">
+    Siguiente
+  </button>
+</div>
+
 
 
 

@@ -1326,8 +1326,10 @@
 </div>
 
 <!-- Boton se muestra cuando todos los casos se respondieron de forma correcta -->
-<button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
-  Finalizar
-</button>
+<div class="d-flex flex-row-reverse">
+  <button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
+    Finalizar
+  </button>
+</div>
 
 {{ endblock }}

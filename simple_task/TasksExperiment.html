@@ -67,7 +67,7 @@
 </style>
 
 <div style="display: flex; justify-content: space-between;">
-  <h5>Meta: {{ goal }} casos</h5>
+  <h5 id="goal-title"></h5>
   <h5 id="wip-title"></h5>
 </div>
 
@@ -988,7 +988,12 @@
   // Construye y renderiza la lista de casos
   function build_case() {
 
+    // Actualizar cantidad de estado resueltos
     wip_title.textContent = `${solved_cases}/${case_list.length}`
+
+    // Actualizar cantidad de estado resueltos
+    var goal_title = document.getElementById('goal-title');
+    goal_title.textContent = `Meta: ${var_goal} casos`
 
     var case_container = document.getElementById('case-container');
     case_container.innerHTML = '';
@@ -1373,8 +1378,10 @@
 </div>
 
 <!-- Boton se muestra cuando todos los casos se respondieron de forma correcta -->
-<button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
-  Finalizar
-</button>
+<div class="d-flex flex-row-reverse">
+  <button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
+    Finalizar
+  </button>
+</div>
 
 {{ endblock }}

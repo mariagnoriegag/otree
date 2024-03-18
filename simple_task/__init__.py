@@ -1,5 +1,4 @@
 from otree.api import *
-import random
 
 doc = """
 Your description
@@ -256,129 +255,7 @@ class Player(BasePlayer):
         label='13. Me preocupé en fallar'
     )
 
-    ## TEST CASE 1 - SIMPLE
-    #Definicion de campos - formulario 1
-    test_case_1_step_1_nombre = models.StringField()
-    test_case_1_step_1_apellido = models.StringField()
-    test_case_1_step_1_codigo = models.StringField()
-    test_case_1_step_1_tipo_seguro = models.StringField()
-    test_case_1_step_1_fecha_vencimiento = models.StringField()
-
-    #Creacion de campos enteros pregunta 2
-    test_case_1_step_2_1 = models.IntegerField(
-        choices=[[1, 'Si'], [2, 'No']],
-        widget=widgets.RadioSelectHorizontal
-    )
-
-    # Creacion de campos enteros pregunta 3
-    test_case_1_step_3_1 = models.IntegerField(
-        choices=[[1, 'Si'], [2, 'No']],
-        widget=widgets.RadioSelectHorizontal
-    )
-    # Creacion de campos enteros pregunta 4
-    test_case_1_step_4_1 = models.IntegerField(
-        choices=[
-            [1, 'El reclamo es aceptado'],
-            [2, 'El reclamo es rechazado']
-        ],
-        widget=widgets.RadioSelect
-    )
-
-    ## TEST CASE 2 - COMPLEX
-    test_case_2_step_1_nombre = models.StringField()
-    test_case_2_step_1_apellido = models.StringField()
-    test_case_2_step_1_codigo = models.StringField()
-    test_case_2_step_1_tipo_seguro = models.StringField()
-    test_case_2_step_1_fecha_vencimiento = models.StringField()
-
-    test_case_2_step_2_1 = models.IntegerField(
-        choices=[[1, 'Si'], [2, 'No']],
-        widget=widgets.RadioSelectHorizontal
-    )
-
-    test_case_2_step_3_1 = models.IntegerField(
-        choices=[[1, 'Si'], [2, 'No']],
-        widget=widgets.RadioSelectHorizontal
-    )
-
-    test_case_2_step_4_propietario = models.StringField()
-    test_case_2_step_4_placa = models.StringField()
-
-    test_case_2_step_5_1 = models.IntegerField(
-        choices=[
-            [1, 'Sí, la información proporcionada en el reclamo es consistente con el Informe Técnico.'],
-            [2, 'No, la información proporcionada en el reclamo es inconsistente con el Informe Técnico.']
-        ],
-        widget=widgets.RadioSelect
-    )
-
-    test_case_2_step_6_1 = models.IntegerField(
-        choices=[
-            [1, 'El reclamo es aceptado'],
-            [2, 'El reclamo es rechazado']
-        ],
-        widget=widgets.RadioSelect
-    )
-
-     ## TEST CASE 3 - SIMPLE
-    #Definicion de campos - formulario 1
-    test_case_3_step_1_nombre = models.StringField()
-    test_case_3_step_1_apellido = models.StringField()
-    test_case_3_step_1_codigo = models.StringField()
-    test_case_3_step_1_tipo_seguro = models.StringField()
-    test_case_3_step_1_fecha_vencimiento = models.StringField()
-
-    #Creacion de campos enteros pregunta 2
-    test_case_3_step_2_1 = models.IntegerField(
-        choices=[[1, 'Si'], [2, 'No']],
-        widget=widgets.RadioSelectHorizontal
-    )
-
-    # Creacion de campos enteros pregunta 3
-    test_case_3_step_3_1 = models.IntegerField(
-        choices=[[1, 'Si'], [2, 'No']],
-        widget=widgets.RadioSelectHorizontal
-    )
-    # Creacion de campos enteros pregunta 4
-    test_case_3_step_4_1 = models.IntegerField(
-        choices=[
-            [1, 'El reclamo es aceptado'],
-            [2, 'El reclamo es rechazado']
-        ],
-        widget=widgets.RadioSelect
-    )
-
-    ## TEST EXTRA METRICS
-
-    #Definicion para registrar inicio y fin de tareas
-    test_start_date = models.StringField()
-    test_end_date = models.StringField()
-
-    #Definicion de casos urgentes / booleano
-    test_case_1_urgent = models.BooleanField()
-    test_case_2_urgent = models.BooleanField()
-    test_case_3_urgent = models.BooleanField()
-
-    #Deficion de tiempo de inicio
-    test_case_1_start_time = models.StringField()
-    test_case_2_start_time = models.StringField()
-    test_case_3_start_time = models.StringField()
-
-    #Definicion de tiempo de finalización de tareas
-    test_case_1_end_time = models.StringField()
-    test_case_2_end_time = models.StringField()
-    test_case_3_end_time = models.StringField()
-
-    test_case_1_solution_time = models.StringField()
-    test_case_2_solution_time = models.StringField()
-    test_case_3_solution_time = models.StringField()
-
-    test_case_1_error_count = models.StringField()
-    test_case_2_error_count = models.StringField()
-    test_case_3_error_count = models.StringField()
-
-    test_list_intr_id = models.StringField()
-    test_list_intr_time = models.StringField()
+    
 
 
     ## CASE 1 - SIMPLE
@@ -902,27 +779,16 @@ class TasksProgressBar(Page):
     pass
 
 class TaskTest(Page):    
-    form_model = 'player'
-    form_fields = [
-        'test_case_1_step_1_nombre', 'test_case_1_step_1_apellido', 'test_case_1_step_1_codigo', 'test_case_1_step_1_tipo_seguro', 'test_case_1_step_1_fecha_vencimiento', 'test_case_1_step_2_1', 'test_case_1_step_3_1', 'test_case_1_step_4_1',
-        'test_case_3_step_1_nombre', 'test_case_3_step_1_apellido', 'test_case_3_step_1_codigo', 'test_case_3_step_1_tipo_seguro', 'test_case_3_step_1_fecha_vencimiento', 'test_case_3_step_2_1','test_case_3_step_3_1', 'test_case_3_step_4_1',
-
-        'test_case_2_step_1_nombre', 'test_case_2_step_1_apellido', 'test_case_2_step_1_codigo', 'test_case_2_step_1_tipo_seguro', 'test_case_2_step_1_fecha_vencimiento', 'test_case_2_step_2_1', 'test_case_2_step_3_1', 'test_case_2_step_4_propietario',  'test_case_2_step_4_placa', 'test_case_2_step_5_1', 'test_case_2_step_6_1',
-        
-        'test_case_1_urgent', 'test_case_2_urgent', 'test_case_3_urgent',
-        'test_case_1_start_time', 'test_case_2_start_time', 'test_case_3_start_time', 
-        'test_case_1_end_time', 'test_case_2_end_time', 'test_case_3_end_time',
-        'test_case_1_solution_time', 'test_case_2_solution_time', 'test_case_3_solution_time',
-        'test_case_1_error_count', 'test_case_2_error_count', 'test_case_3_error_count',
-        'test_list_intr_id', 'test_list_intr_time',
-        'test_start_date', 'test_end_date'
-    ]
+    #La cantidad de casos se define en el archivo TaskTest.html variable case_list
     pass
 
+# Pagina de Calibracion: contiene 12 casos, 7 normales y 5 complejos
+#La cantidad de casos se define en el archivo TasksCalibration.html variable case_list
 class TasksCalibration(Page):    
-    timeout_seconds = 20 * 60
+    timeout_seconds = 1 * 60
     form_model = 'player'
     form_fields = [
+        #Casos normales
         'case_1_step_1_nombre', 'case_1_step_1_apellido', 'case_1_step_1_codigo', 'case_1_step_1_tipo_seguro', 'case_1_step_1_fecha_vencimiento', 'case_1_step_2_1', 'case_1_step_3_1', 'case_1_step_4_1',
         'case_2_step_1_nombre', 'case_2_step_1_apellido', 'case_2_step_1_codigo', 'case_2_step_1_tipo_seguro', 'case_2_step_1_fecha_vencimiento', 'case_2_step_2_1', 'case_2_step_3_1', 'case_2_step_4_1',
         'case_3_step_1_nombre', 'case_3_step_1_apellido', 'case_3_step_1_codigo', 'case_3_step_1_tipo_seguro', 'case_3_step_1_fecha_vencimiento', 'case_3_step_2_1','case_3_step_3_1', 'case_3_step_4_1',
@@ -930,18 +796,19 @@ class TasksCalibration(Page):
         'case_8_step_1_nombre', 'case_8_step_1_apellido', 'case_8_step_1_codigo', 'case_8_step_1_tipo_seguro', 'case_8_step_1_fecha_vencimiento', 'case_8_step_2_1', 'case_8_step_3_1', 'case_8_step_4_1',
         'case_10_step_1_nombre', 'case_10_step_1_apellido', 'case_10_step_1_codigo', 'case_10_step_1_tipo_seguro', 'case_10_step_1_fecha_vencimiento', 'case_10_step_2_1', 'case_10_step_3_1', 'case_10_step_4_1',
         'case_11_step_1_nombre', 'case_11_step_1_apellido', 'case_11_step_1_codigo', 'case_11_step_1_tipo_seguro', 'case_11_step_1_fecha_vencimiento', 'case_11_step_2_1', 'case_11_step_3_1', 'case_11_step_4_1',
-
+        #Casos complejos
         'case_4_step_1_nombre', 'case_4_step_1_apellido', 'case_4_step_1_codigo', 'case_4_step_1_tipo_seguro', 'case_4_step_1_fecha_vencimiento', 'case_4_step_2_1', 'case_4_step_3_1', 'case_4_step_4_propietario',  'case_4_step_4_placa', 'case_4_step_5_1', 'case_4_step_6_1',
         'case_5_step_1_nombre', 'case_5_step_1_apellido', 'case_5_step_1_codigo', 'case_5_step_1_tipo_seguro', 'case_5_step_1_fecha_vencimiento', 'case_5_step_2_1', 'case_5_step_3_1', 'case_5_step_4_propietario','case_5_step_4_placa', 'case_5_step_5_1', 'case_5_step_6_1',
         'case_7_step_1_nombre', 'case_7_step_1_apellido', 'case_7_step_1_codigo', 'case_7_step_1_tipo_seguro', 'case_7_step_1_fecha_vencimiento', 'case_7_step_2_1',  'case_7_step_3_1', 'case_7_step_4_propietario',  'case_7_step_4_placa', 'case_7_step_5_1', 'case_7_step_6_1',
         'case_9_step_1_nombre', 'case_9_step_1_apellido', 'case_9_step_1_codigo', 'case_9_step_1_tipo_seguro', 'case_9_step_1_fecha_vencimiento', 'case_9_step_2_1', 'case_9_step_3_1', 'case_9_step_4_propietario', 'case_9_step_4_placa', 'case_9_step_5_1', 'case_9_step_6_1',
         'case_12_step_1_nombre', 'case_12_step_1_apellido', 'case_12_step_1_codigo', 'case_12_step_1_tipo_seguro', 'case_12_step_1_fecha_vencimiento', 'case_12_step_2_1', 'case_12_step_3_1', 'case_12_step_4_propietario', 'case_12_step_4_placa', 'case_12_step_5_1', 'case_12_step_6_1',
-        
+        #Datos finales por caso
         'case_1_urgent', 'case_2_urgent', 'case_3_urgent', 'case_4_urgent', 'case_5_urgent', 'case_6_urgent', 'case_7_urgent', 'case_8_urgent', 'case_9_urgent', 'case_10_urgent', 'case_11_urgent', 'case_12_urgent',
         'case_1_start_time', 'case_2_start_time', 'case_3_start_time', 'case_4_start_time', 'case_5_start_time', 'case_6_start_time', 'case_7_start_time', 'case_8_start_time', 'case_9_start_time', 'case_10_start_time', 'case_11_start_time', 'case_12_start_time',
         'case_1_end_time', 'case_2_end_time', 'case_3_end_time', 'case_4_end_time', 'case_5_end_time', 'case_6_end_time', 'case_7_end_time', 'case_8_end_time', 'case_9_end_time', 'case_10_end_time', 'case_11_end_time', 'case_12_end_time',
         'case_1_solution_time', 'case_2_solution_time', 'case_3_solution_time', 'case_4_solution_time', 'case_5_solution_time', 'case_6_solution_time', 'case_7_solution_time', 'case_8_solution_time', 'case_9_solution_time', 'case_10_solution_time', 'case_11_solution_time', 'case_12_solution_time',
         'case_1_error_count', 'case_2_error_count', 'case_3_error_count', 'case_4_error_count', 'case_5_error_count', 'case_6_error_count', 'case_7_error_count', 'case_8_error_count', 'case_9_error_count', 'case_10_error_count', 'case_11_error_count', 'case_12_error_count',
+        #Datos finales del formulario
         'list_intr_id', 'list_intr_time',
         'start_date', 'end_date'
     ]
@@ -973,13 +840,6 @@ class TasksExperiment(Page):
         'list_intr_id', 'list_intr_time',
         'start_date', 'end_date', 'goal'
     ]
-    @staticmethod
-    def vars_for_template(player):
-        return dict(
-            goal=player.goal,
-        )
-    
-    pass
 
     @staticmethod
     def js_vars(player):
@@ -996,21 +856,22 @@ class DatosQuiz(Page):
     ]
     pass
 
+#pagina de resultados: cantidad de casos resueltos
 class Results(Page):
     form_model = 'player'
 
     @staticmethod
     def vars_for_template(player):
         case_end_times = []
-        count_non_empty = 0
+        case_non_empty = 0
         for i in range(1, 13):
             case_end_time = player.field_maybe_none(f'case_{i}_end_time')
             case_end_times.append(case_end_time)
-            if case_end_time != "":
-                count_non_empty += 1
+            if case_end_time is not None and case_end_time != "":
+                case_non_empty += 1
         return dict(
-            case_end_times=case_end_times,
-            count_non_empty=count_non_empty
+            #case_end_times=case_end_times,
+            case_non_empty=case_non_empty
         )
     
     pass
@@ -1043,7 +904,6 @@ class MultiQuiz(Page):
     ]
     pass
 
-
 class EndQuiz(Page):
     form_model = 'player'
     
@@ -1061,7 +921,5 @@ class FlowQuiz(Page):
     pass
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
-#page_sequence = [TasksExperiment]
-page_sequence = [Instrucciones, TaskTest, TasksCalibration, Results,  EndQuiz]
-
-# aplicar la barra de progreso
+#page_sequence = [Instrucciones, TaskTest, TasksCalibration, Results,  EndQuiz]
+page_sequence = [TasksExperiment, Results]
