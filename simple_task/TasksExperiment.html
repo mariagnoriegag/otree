@@ -66,10 +66,16 @@
   }
 </style>
 
+<div style="display: flex; justify-content: space-between;">
+  <h5>Meta: {{ goal }} casos</h5>
+  <h5 id="wip-title"></h5>
+</div>
+
 <!-- Seccion barra de progreso -->
-<div class="progress" style="margin-bottom: 24px;">
+<div class="progress" style="margin-bottom: 36px;">
   <div id="myBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
 </div>
+
 
 <!-- Seccion de tiempo restante y lista de casos -->
 <div class="row">
@@ -947,11 +953,15 @@
 
   let solved_cases = 0;
   let var_goal = js_vars.goal;
-  /* console.log({count_non_empty: js_vars.count_non_empty}) */
+
+  var wip_title = document.getElementById('wip-title');
+    
 
   // Actualiza la barra de progreso
   function update_wip() {
-    solved_cases++ // Actualizar el valor de casos resueltos
+    solved_cases++ // Sumar 1 a la cantidad de casos resueltos
+
+    wip_title.textContent = `${solved_cases}/${case_list.length}`
 
     var progress_bar = document.getElementById("myBar");
     var goal = var_goal; // Meta
@@ -966,17 +976,20 @@
     
     // Cambiar el color de la barra de progreso según la meta
     if (solved_cases < goal) {
-      progress_bar.classList.add("bg-warning");
+      progress_bar.classList.add("bg-danger");
     } else if (solved_cases == goal) {
-      progress_bar.classList.remove("bg-warning");
-    } else {
-      progress_bar.classList.remove("bg-warning");
+      progress_bar.classList.remove("bg-danger");
       progress_bar.classList.add("bg-success");
+    } else {
+      progress_bar.classList.remove("bg-danger", "bg-success");
     }
   }
 
   // Construye y renderiza la lista de casos
   function build_case() {
+
+    wip_title.textContent = `${solved_cases}/${case_list.length}`
+
     var case_container = document.getElementById('case-container');
     case_container.innerHTML = '';
 

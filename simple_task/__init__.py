@@ -19,7 +19,7 @@ def creating_session(subsession: Subsession):
     import random
 
     for player in subsession.get_players():
-        r = random.randint(2, 4)
+        r = random.choice([3, 5, 8])  #Numeros para la meta
         player.default = r
         player.goal = r
 
@@ -948,7 +948,7 @@ class TasksCalibration(Page):
     pass
 
 class TasksExperiment(Page):    
-    timeout_seconds = 1 * 60
+    timeout_seconds = 20 * 60
     form_model = 'player'
     form_fields = [
         'case_1_step_1_nombre', 'case_1_step_1_apellido', 'case_1_step_1_codigo', 'case_1_step_1_tipo_seguro', 'case_1_step_1_fecha_vencimiento', 'case_1_step_2_1', 'case_1_step_3_1', 'case_1_step_4_1',
@@ -973,6 +973,13 @@ class TasksExperiment(Page):
         'list_intr_id', 'list_intr_time',
         'start_date', 'end_date', 'goal'
     ]
+    @staticmethod
+    def vars_for_template(player):
+        return dict(
+            goal=player.goal,
+        )
+    
+    pass
 
     @staticmethod
     def js_vars(player):
@@ -1054,7 +1061,7 @@ class FlowQuiz(Page):
     pass
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
-# page_sequence = [Task]
-page_sequence = [TasksExperiment]
+#page_sequence = [TasksExperiment]
+page_sequence = [Instrucciones, TaskTest, TasksCalibration, Results,  EndQuiz]
 
 # aplicar la barra de progreso
