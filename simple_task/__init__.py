@@ -710,7 +710,7 @@ class FlowQuiz(Page):
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
 
-
-#page_sequence = [Instrucciones, TaskTest, TasksCalibration, Results,  EndQuiz]
+#Calibracion
+page_sequence = [Instrucciones, TaskTest, TasksCalibration, Results,  EndQuiz]
+#Experimento
 #page_sequence = [Instrucciones, TaskTest, TasksDoYourBest, TasksExperiment, Results, EndQuiz]
-page_sequence = [TasksCalibration, Results]
