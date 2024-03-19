@@ -1,0 +1,1337 @@
+{{ block title }}
+<h1 style="margin-bottom: 48px;">Da lo mejor!</h1>
+{{ endblock }}
+
+{{ block content }}
+
+<style>
+  .extra-data {
+    display: none;
+  }
+
+  .side-section {
+    margin-bottom: 30px;
+  }
+
+  .wip-elem {
+    cursor: pointer;
+  }
+
+  .email-msg {
+    cursor: pointer;
+  }
+
+  .email-msg:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, .075);
+  }
+
+  .email-msg p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .case-section {
+    margin-bottom: 30px;
+  }
+
+  .tb-codigo {
+    width: 15%;
+  }
+
+  .tb-nombre {
+    width: 17%;
+  }
+
+  .tb-apellido {
+    width: 18%;
+  }
+
+  .tb-seguro {
+    width: 20%;
+  }
+
+  .tb-fecha {
+    width: 30%;
+  }
+
+  .tb-data-row {
+    width: 100%;
+    display: inline-flex;
+  }
+
+  .open-inbox {
+    display: none;
+  }
+
+  .w3-green, .w3-hover-green:hover {
+    color: #fff !important;
+    background-color: #4CAF50 !important;
+  }
+</style>
+
+<!-- Seccion de tiempo restante y lista de casos -->
+<div class="row">
+  <div class="col-4 close-inbox">
+    <div class="side-section">
+      <h3>Tiempo Restante</h3>
+      <h1 id="time-left" style="text-align:center"></h1>
+    </div>
+  </div>
+  
+  <div id="case-container" class="col-8 close-inbox">
+  </div>
+
+  <div id="extra-container" class="extra-data">
+    <input type="text" name="list_intr_id" id="list_intr_id" />
+    <input type="text" name="list_intr_time" id="list_intr_time" />
+
+    <input type="text" name="start_date" id="start_date" />
+    <input type="text" name="end_date" id="end_date" value="-1" />
+  </div>
+</div>
+
+<!-- <script type="module" src="caseList.js"></script> -->
+
+<script>
+
+  // Template de casos simples
+  var simple_template = `
+    <div id="case-{case_id}" class="case" style="display: none;">
+        <div class="case-section">
+          <h3>{case_asunto}</h3>
+          <p>
+            {case_texto}
+          </p>
+        </div>
+        <div class="case-section">
+          <h3>Base de datos</h3>
+          <table class="table">
+            <thead style="display: block;">
+              <tr>
+                <th class="tb-codigo">Código</th>
+                <th class="tb-nombre">Nombre</th>
+                <th class="tb-apellido">Apellido</th>
+                <th class="tb-seguro">Tipo de seguro</th>
+                <th class="tb-fecha">Fecha de vencimiento (día/mes/año)</th>
+                <th style="width: 0;"></th>
+              </tr>
+            </thead>
+            <tbody style="height: 150px; overflow-y: auto; width: 100%; display: block;">
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-001</td>
+                <td class="tb-nombre">Adrian</td>
+                <td class="tb-apellido">Molina</td>
+                <td class="tb-seguro">Plan Oro</td>
+                <td class="tb-fecha">01/10/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-002</td>
+                <td class="tb-nombre">Alvaro</td>
+                <td class="tb-apellido">Maldonado</td>
+                <td class="tb-seguro">Plan Plata</td>
+                <td class="tb-fecha">01/11/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-003</td>
+                <td class="tb-nombre">Maria</td>
+                <td class="tb-apellido">Sinfuentes</td>
+                <td class="tb-seguro">Plan Diamante</td>
+                <td class="tb-fecha">01/12/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-004</td>
+                <td class="tb-nombre">Jimena</td>
+                <td class="tb-apellido">Miller</td>
+                <td class="tb-seguro">Plan Regular</td>
+                <td class="tb-fecha">01/01/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-005</td>
+                <td class="tb-nombre">Sofia</td>
+                <td class="tb-apellido">Davis</td>
+                <td class="tb-seguro">Plan Plata</td>
+                <td class="tb-fecha">01/02/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-006</td>
+                <td class="tb-nombre">Valeria</td>
+                <td class="tb-apellido">Jimenez</td>
+                <td class="tb-seguro">Plan Diamante</td>
+                <td class="tb-fecha">01/03/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-007</td>
+                <td class="tb-nombre">Chistopher</td>
+                <td class="tb-apellido">Rosales</td>
+                <td class="tb-seguro">Plan Regular</td>
+                <td class="tb-fecha">01/04/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-008</td>
+                <td class="tb-nombre">Micaela</td>
+                <td class="tb-apellido">Harris</td>
+                <td class="tb-seguro">Plan Regular</td>
+                <td class="tb-fecha">01/05/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-009</td>
+                <td class="tb-nombre">Abraham</td>
+                <td class="tb-apellido">Smith</td>
+                <td class="tb-seguro">Plan Plata</td>
+                <td class="tb-fecha">01/08/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-010</td>
+                <td class="tb-nombre">Paty</td>
+                <td class="tb-apellido">Jimenez</td>
+                <td class="tb-seguro">Plan Oro</td>
+                <td class="tb-fecha">01/07/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-011</td>
+                <td class="tb-nombre">Astrid</td>
+                <td class="tb-apellido">Wilson</td>
+                <td class="tb-seguro">Plan Oro</td>
+                <td class="tb-fecha">01/08/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-012</td>
+                <td class="tb-nombre">Jesus</td>
+                <td class="tb-apellido">Walker</td>
+                <td class="tb-seguro">Plan Diamante</td>
+                <td class="tb-fecha">01/09/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-013</td>
+                <td class="tb-nombre">Fernanda</td>
+                <td class="tb-apellido">Santos</td>
+                <td class="tb-seguro">Plan Regular</td>
+                <td class="tb-fecha">01/10/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-014</td>
+                <td class="tb-nombre">Alannis</td>
+                <td class="tb-apellido">Diaz</td>
+                <td class="tb-seguro">Plan Plata</td>
+                <td class="tb-fecha">01/11/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-015</td>
+                <td class="tb-nombre">Nickole</td>
+                <td class="tb-apellido">Rojas</td>
+                <td class="tb-seguro">Plan Diamante</td>
+                <td class="tb-fecha">01/03/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-016</td>
+                <td class="tb-nombre">William</td>
+                <td class="tb-apellido">Rivera</td>
+                <td class="tb-seguro">Plan Regular</td>
+                <td class="tb-fecha">01/08/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-017</td>
+                <td class="tb-nombre">Vanessa</td>
+                <td class="tb-apellido">Arteaga</td>
+                <td class="tb-seguro">Plan Regular</td>
+                <td class="tb-fecha">01/05/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-018</td>
+                <td class="tb-nombre">Beatriz</td>
+                <td class="tb-apellido">Brown</td>
+                <td class="tb-seguro">Plan Plata</td>
+                <td class="tb-fecha">01/08/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-019</td>
+                <td class="tb-nombre">Patrick</td>
+                <td class="tb-apellido">Jones</td>
+                <td class="tb-seguro">Plan Oro</td>
+                <td class="tb-fecha">01/07/2022</td>
+              </tr>
+              <tr class="tb-data-row">
+                <td class="tb-codigo">BXD-020</td>
+                <td class="tb-nombre">Benny</td>
+                <td class="tb-apellido">Garcia</td>
+                <td class="tb-seguro">Plan Plata</td>
+                <td class="tb-fecha">01/08/2022</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="case-section">
+          <h3>Tipos de seguros:</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Plan Diamante</th>
+                <th>Plan Oro</th>
+                <th>Plan Plata</th>
+                <th>Plan Regular</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <ul>
+                    <li>Robo 100%</li>
+                    <li>Daños a terceras personas 100%</li>
+                    <li>Accidentes Personales</li>
+                    <li>Servicios Adicionales</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Robo 100%</li>
+                    <li>Daños a terceras personas 75%</li>
+                    <li>Accidentes Personales</li>
+                    <li>Servicios Adicionales</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Robo 75%</li>
+                    <li>Daños a terceras personaS 50%</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Robo 50%</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="case-section">
+          <h3>Detalle de servicios</h3>
+          <img src="{{ static 'services_detail.png' }}" />
+        </div>
+        <div class="case-section">
+          <h3>Preguntas</h3>
+          <div class="row">
+            <div class="col">
+              <h4>Paso 1: Datos del reclamante</h4>
+              <p>Lea el reclamo individual y complete los siguientes datos:</p>
+              <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="id_case_{case_id}_step_1_nombre" name="case_{case_id}_step_1_nombre" required="" value="">
+                <div id="case_{case_id}_step_1_nombre-error" class="invalid-feedback">
+                  Respuesta Incorrecta
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="id_case_{case_id}_step_1_apellido" name="case_{case_id}_step_1_apellido" required="" value="">
+                <div id="case_{case_id}_step_1_apellido-error" class="invalid-feedback">
+                  Respuesta Incorrecta
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Código</label>
+                <input type="text" class="form-control" id="id_case_{case_id}_step_1_codigo" name="case_{case_id}_step_1_codigo" required="" value="">
+                <div id="case_{case_id}_step_1_codigo-error" class="invalid-feedback">
+                  Respuesta Incorrecta
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Tipo de seguro</label>
+                <input type="text" class="form-control" id="id_case_{case_id}_step_1_tipo_seguro" name="case_{case_id}_step_1_tipo_seguro" required="" value="">
+                <div id="case_{case_id}_step_1_tipo_seguro-error" class="invalid-feedback">
+                  Respuesta Incorrecta
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Fecha de vencimiento</label>
+                <input type="date" class="form-control" id="id_case_{case_id}_step_1_fecha_vencimiento" name="case_{case_id}_step_1_fecha_vencimiento" required="" value="">
+                <div id="case_{case_id}_step_1_fecha_vencimiento-error" class="invalid-feedback">
+                  Respuesta Incorrecta
+                </div>
+              </div>
+              <br><br>
+              <h4>Paso 2: Datos básicos del seguro</h4>
+              <p>Por favor busque en la base de datos de asegurados.</p>
+              <p>¿Sigue activo el seguro? Presta atención a la fecha de caducidad.</p>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_2_1-0" name="case_{case_id}_step_2_1" required="" value="1">
+                <label for="id_case_{case_id}_step_2_1-0" class="form-check-label">Si</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_2_1-1" name="case_{case_id}_step_2_1" required="" value="2">
+                <label for="id_case_{case_id}_step_2_1-1" class="form-check-label">No</label>
+              </div>
+              <div id="case_{case_id}_step_2_1-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+              <br><br>
+              <h4>Paso 3: Verificación de cobertura</h4>
+              <p>Lea el reclamo y verifique si el plan incluye cobertura para ese reclamo de acuerdo con los "Tipos de
+                seguro".</p>
+              <p>Luego responde lo siguiente:</p>
+              <p>¿El siniestro está cubierto por el plan de seguro? Presta atención a la tabla "Tipos de seguros" (Revisar
+                los servicios)</p>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_3_1-0" name="case_{case_id}_step_3_1" required="" value="1">
+                <label for="id_case_{case_id}_step_3_1-0" class="form-check-label">Si</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_3_1-1" name="case_{case_id}_step_3_1" required="" value="2">
+                <label for="id_case_{case_id}_step_3_1-1" class="form-check-label">No</label>
+              </div>
+              <div id="case_{case_id}_step_3_1-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+            <div class="col">
+              <h4>Paso 4: Decisión de conceder el reclamo</h4>
+              <p>Si y solo si, el seguro aún está activo y el reclamo está cubierto, entonces la decisión debe ser que el
+                reclamo sea aprobado (o concedido).</p>
+              <p>Si el reclamo no está activo o si el seguro no está cubierto, la decisión debe ser que se rechace el
+                reclamo.</p>
+              <p>La decisión de conceder los reclamos son:</p>
+              <div id="id_case_{case_id}_step_4_1" required="">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="id_case_{case_id}_step_4_1-0" name="case_{case_id}_step_4_1" required="" value="1">
+                  <label for="id_case_{case_id}_step_4_1-0">El reclamo es aceptado</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="id_case_{case_id}_step_4_1-1" name="case_{case_id}_step_4_1" required="" value="2">
+                  <label for="id_case_{case_id}_step_4_1-1">El reclamo es rechazado</label>
+                </div>
+              </div>
+              <div id="case_{case_id}_step_4_1-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+              <br><br>
+            </div>
+          </div>
+          <div class="row">
+            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none; margin-top: 24px;">
+              Algunas respuestas estan mal
+            </div>
+
+            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none; margin-top: 24px;">
+              Las respuestas estan correctas.
+            </div>
+            
+            <div class="col-md-12" style="display: flex; gap: 24px; justify-content: flex-end; margin-top: 24px;">
+                  <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
+                    Validar caso
+                  </button>
+                  <button disabled type="button" id="next-case-btn-{case_id}" onclick="show_next_case({case_id})" class="btn btn-success">
+                    Siguiente caso
+                  </button>
+              </div>
+             
+          </div>
+        </div>
+      </div>
+  `;
+
+  // Template de casos complejos
+  var complex_template = `
+  <div id="case-{case_id}" class="case" style="display: none;">
+      <div class="case-section">
+        <h3>{case_asunto}</h3>
+        <p>
+          {case_texto}
+        </p>
+      </div>
+      <div class="case-section">
+        <h3>Informe técnico: Guía para validar la veracidad del correo electrónico</h3>
+        <img src="/static/{case_reporte}" />
+      </div>
+      <div class="case-section">
+        <h3>Base de datos</h3>
+        <table class="table">
+          <thead style="display: block;">
+            <tr>
+              <th class="tb-codigo">Código</th>
+              <th class="tb-nombre">Nombre</th>
+              <th class="tb-apellido">Apellido</th>
+              <th class="tb-seguro">Tipo de seguro</th>
+              <th class="tb-fecha">Fecha de vencimiento (día/mes/año)</th>
+              <th style="width: 0;"></th>
+            </tr>
+          </thead>
+          <tbody style="height: 150px; overflow-y: auto; width: 100%; display: block;">
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-001</td>
+              <td class="tb-nombre">Adrian</td>
+              <td class="tb-apellido">Molina</td>
+              <td class="tb-seguro">Plan Oro</td>
+              <td class="tb-fecha">01/10/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-002</td>
+              <td class="tb-nombre">Alvaro</td>
+              <td class="tb-apellido">Maldonado</td>
+              <td class="tb-seguro">Plan Plata</td>
+              <td class="tb-fecha">01/11/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-003</td>
+              <td class="tb-nombre">Maria</td>
+              <td class="tb-apellido">Sinfuentes</td>
+              <td class="tb-seguro">Plan Diamante</td>
+              <td class="tb-fecha">01/12/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-004</td>
+              <td class="tb-nombre">Jimena</td>
+              <td class="tb-apellido">Miller</td>
+              <td class="tb-seguro">Plan Regular</td>
+              <td class="tb-fecha">01/01/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-005</td>
+              <td class="tb-nombre">Sofia</td>
+              <td class="tb-apellido">Davis</td>
+              <td class="tb-seguro">Plan Plata</td>
+              <td class="tb-fecha">01/02/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-006</td>
+              <td class="tb-nombre">Valeria</td>
+              <td class="tb-apellido">Jimenez</td>
+              <td class="tb-seguro">Plan Diamante</td>
+              <td class="tb-fecha">01/03/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-007</td>
+              <td class="tb-nombre">Chistopher</td>
+              <td class="tb-apellido">Rosales</td>
+              <td class="tb-seguro">Plan Regular</td>
+              <td class="tb-fecha">01/04/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-008</td>
+              <td class="tb-nombre">Micaela</td>
+              <td class="tb-apellido">Harris</td>
+              <td class="tb-seguro">Plan Regular</td>
+              <td class="tb-fecha">01/05/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-009</td>
+              <td class="tb-nombre">Abraham</td>
+              <td class="tb-apellido">Smith</td>
+              <td class="tb-seguro">Plan Plata</td>
+              <td class="tb-fecha">01/08/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-010</td>
+              <td class="tb-nombre">Paty</td>
+              <td class="tb-apellido">Jimenez</td>
+              <td class="tb-seguro">Plan Oro</td>
+              <td class="tb-fecha">01/07/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-011</td>
+              <td class="tb-nombre">Astrid</td>
+              <td class="tb-apellido">Wilson</td>
+              <td class="tb-seguro">Plan Oro</td>
+              <td class="tb-fecha">01/08/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-012</td>
+              <td class="tb-nombre">Jesus</td>
+              <td class="tb-apellido">Walker</td>
+              <td class="tb-seguro">Plan Diamante</td>
+              <td class="tb-fecha">01/09/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-013</td>
+              <td class="tb-nombre">Fernanda</td>
+              <td class="tb-apellido">Santos</td>
+              <td class="tb-seguro">Plan Regular</td>
+              <td class="tb-fecha">01/10/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-014</td>
+              <td class="tb-nombre">Alannis</td>
+              <td class="tb-apellido">Diaz</td>
+              <td class="tb-seguro">Plan Plata</td>
+              <td class="tb-fecha">01/11/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-015</td>
+              <td class="tb-nombre">Nickole</td>
+              <td class="tb-apellido">Rojas</td>
+              <td class="tb-seguro">Plan Diamante</td>
+              <td class="tb-fecha">01/03/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-016</td>
+              <td class="tb-nombre">William</td>
+              <td class="tb-apellido">Rivera</td>
+              <td class="tb-seguro">Plan Regular</td>
+              <td class="tb-fecha">01/08/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-017</td>
+              <td class="tb-nombre">Vanessa</td>
+              <td class="tb-apellido">Arteaga</td>
+              <td class="tb-seguro">Plan Regular</td>
+              <td class="tb-fecha">01/05/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-018</td>
+              <td class="tb-nombre">Beatriz</td>
+              <td class="tb-apellido">Brown</td>
+              <td class="tb-seguro">Plan Plata</td>
+              <td class="tb-fecha">01/08/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-019</td>
+              <td class="tb-nombre">Patrick</td>
+              <td class="tb-apellido">Jones</td>
+              <td class="tb-seguro">Plan Oro</td>
+              <td class="tb-fecha">01/07/2022</td>
+            </tr>
+            <tr class="tb-data-row">
+              <td class="tb-codigo">BXD-020</td>
+              <td class="tb-nombre">Benny</td>
+              <td class="tb-apellido">Garcia</td>
+              <td class="tb-seguro">Plan Plata</td>
+              <td class="tb-fecha">01/08/2022</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="case-section">
+        <h3>Tipos de seguros:</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Plan Diamante</th>
+              <th>Plan Oro</th>
+              <th>Plan Plata</th>
+              <th>Plan Regular</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <ul>
+                  <li>Robo 100%</li>
+                  <li>Daños a terceras personas 100%</li>
+                  <li>Accidentes Personales</li>
+                  <li>Servicios Adicionales</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Robo 100%</li>
+                  <li>Daños a terceras personas 75%</li>
+                  <li>Accidentes Personales</li>
+                  <li>Servicios Adicionales</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Robo 75%</li>
+                  <li>Daños a terceras personaS 50%</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Robo 50%</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="case-section">
+        <h3>Detalle de servicios</h3>
+        <img src="{{ static 'services_detail.png' }}" />
+      </div>
+      <div class="case-section">
+        <h3>Preguntas</h3>
+        <div class="row">
+          <div class="col">
+            <h4>Paso 1: Datos del reclamante</h4>
+            <p>Lea el reclamo individual y complete los siguientes datos:</p>
+            <div class="mb-3">
+              <label for="formGroupExampleInput" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="id_case_{case_id}_step_1_nombre" name="case_{case_id}_step_1_nombre" required="" value="">
+              <div id="case_{case_id}_step_1_nombre-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="formGroupExampleInput" class="form-label">Apellido</label>
+              <input type="text" class="form-control" id="id_case_{case_id}_step_1_apellido" name="case_{case_id}_step_1_apellido" required="" value="">
+              <div id="case_{case_id}_step_1_apellido-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="formGroupExampleInput" class="form-label">Código</label>
+              <input type="text" class="form-control" id="id_case_{case_id}_step_1_codigo" name="case_{case_id}_step_1_codigo" required="" value="">
+              <div id="case_{case_id}_step_1_codigo-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="formGroupExampleInput" class="form-label">Tipo de seguro</label>
+              <input type="text" class="form-control" id="id_case_{case_id}_step_1_tipo_seguro" name="case_{case_id}_step_1_tipo_seguro" required="" value="">
+              <div id="case_{case_id}_step_1_tipo_seguro-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="formGroupExampleInput" class="form-label">Fecha de vencimiento</label>
+              <input type="date" class="form-control" id="id_case_{case_id}_step_1_fecha_vencimiento" name="case_{case_id}_step_1_fecha_vencimiento" required="" value="">
+              <div id="case_{case_id}_step_1_fecha_vencimiento-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+            <br><br>
+            <br>
+            <h4>Paso 2: Datos básicos del seguro</h4>
+              <p>Por favor busque en la base de datos de asegurados.</p>
+              <p>¿Sigue activo el seguro? Presta atención a la fecha de caducidad.</p>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_2_1-0" name="case_{case_id}_step_2_1" required="" value="1">
+                <label for="id_case_{case_id}_step_2_1-0" class="form-check-label">Si</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_2_1-1" name="case_{case_id}_step_2_1" required="" value="2">
+                <label for="id_case_{case_id}_step_2_1-1" class="form-check-label">No</label>
+              </div>
+              <div id="case_{case_id}_step_2_1-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+              <br><br>
+            <h4>Paso 3: Verificación de cobertura</h4>
+            <p>Lea el reclamo y verifique si el plan incluye cobertura para ese reclamo de acuerdo con los "Tipos de
+              seguro".</p>
+            <p>Luego responde lo siguiente:</p>
+            <p>¿El siniestro está cubierto por el plan de seguro? Presta atención a la tabla "Tipos de seguros" (Revisar
+              los servicios)</p>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_3_1-0" name="case_{case_id}_step_3_1" required="" value="1">
+                <label for="id_case_{case_id}_step_3_1-0" class="form-check-label">Si</label>
+            </div>
+            
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_3_1-1" name="case_{case_id}_step_3_1" required="" value="2">
+                <label for="id_case_{case_id}_step_3_1-1" class="form-check-label">No</label>
+            </div>
+            <div id="case_{case_id}_step_3_1-error" class="invalid-feedback">
+              Respuesta Incorrecta
+            </div>
+            <br><br>
+            
+            <h4>Paso 4: Informe técnico</h4>
+            <p>Por favor, lea el Informe Técnico como complemento del reclamo.</p>
+            <p>Complete los datos del tercero afectado según el Informe Técnico:</p>
+            <div class="mb-3">
+              <label for="formGroupExampleInput" class="form-label">Propietario del vehículo:</label>
+              <input type="text" class="form-control" id="id_case_{case_id}_step_4_propietario" name="case_{case_id}_step_4_propietario" required="" value="">
+              <div id="case_{case_id}_step_4_propietario-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="formGroupExampleInput" class="form-label">Placa:</label>
+              <input type="text" class="form-control" id="id_case_{case_id}_step_4_placa" name="case_{case_id}_step_4_placa" required="" value="">
+              <div id="case_{case_id}_step_4_placa-error" class="invalid-feedback">
+                Respuesta Incorrecta
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <h4>Paso 5:</h4>
+            <p>Por favor compare el reclamo con el Informe Técnico. En particular, preste atención a la fecha del
+              accidente, nombre, apellido y la descripción del accidente . Si alguno de estos es diferente, indíquelo
+              respondiendo a la siguiente pregunta:</p>
+            <p>¿La afirmación es consistente con el Informe Técnico?</p>
+            <div id="id_case_{case_id}_step_5_1" required="">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_5_1-0" name="case_{case_id}_step_5_1" required="" value="1">
+                <label for="id_case_{case_id}_step_5_1-0">Sí, la información proporcionada en el reclamo es consistente con el Informe Técnico.</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_5_1-1" name="case_{case_id}_step_5_1" required="" value="2">
+                <label for="id_case_{case_id}_step_5_1-1">No, la información proporcionada en el reclamo es inconsistente con el Informe Técnico.</label>
+              </div>
+            </div>
+            <div id="case_{case_id}_step_5_1-error" class="invalid-feedback">
+              Respuesta Incorrecta
+            </div>
+            <br><br>
+            <h4>Paso 6: Decisión de conceder el reclamo</h4>
+            <p>Si y solo si el seguro aún está activo, el reclamo está cubierto y la información del reclamo es
+              consistente con el Informe Técnico, entonces la decisión debe ser que el reclamo sea aprobado (o
+              concedido). Si el reclamo no está activo o si el seguro no está cubierto, la decisión debe ser que se
+              rechace el reclamo.</p>
+            <p>La decisión de conceder los reclamos son:</p>
+            <div id="id_case_{case_id}_step_6_1" required="">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_6_1-0" name="case_{case_id}_step_6_1" required="" value="1">
+                <label for="id_case_{case_id}_step_6_1-0">El reclamo es aceptado</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="id_case_{case_id}_step_6_1-1" name="case_{case_id}_step_6_1" required="" value="2">
+                <label for="id_case_{case_id}_step_6_1-1">El reclamo es rechazado</label>
+              </div>
+            </div>
+            <div id="case_{case_id}_step_6_1-error" class="invalid-feedback">
+              Respuesta Incorrecta
+            </div>
+            <br><br>
+          </div>
+        </div>
+        <div class="row">
+            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none; margin-top: 24px;">
+              Algunas respuestas estan mal
+            </div>
+
+            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none; margin-top: 24px;">
+              Las respuestas estan correctas.
+            </div>
+            
+            <div class="col-md-12" style="display: flex; gap: 24px; justify-content: flex-end; margin-top: 24px;">
+                  <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
+                    Validar caso
+                  </button>
+                  <button disabled type="button" id="next-case-btn-{case_id}" onclick="show_next_case({case_id})" class="btn btn-success">
+                    Siguiente caso
+                  </button>
+              </div>
+             
+          </div>
+      </div>
+    </div>
+  `;
+
+
+  // Lista de casos
+  var case_list = [
+    {
+      "Asunto": "CASO 8484 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n          Quiero preguntarle sobre la cobertura de mi seguro de automóvil. El 26 de Mayo tuve un choque y mi auto\n          resultó dañado, y esto presenta daños en la parte delantera del auto. El parachoques fue destruido. Quisiera\n          saber si el seguro de vehículo que tengo en su empresa cubre esto. Si la respuesta es afirmativa, quisiera\n          información sobre los pasos que debo seguir para activar mi seguro de vehículo.<br><br>\n          Quedo a la espera de su amable respuesta.<br>\n          Atentamente,<br>\n          Vanessa Arteaga Molina",
+      "Complejo": false,
+      "TiempoEnvio": 0,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Vanessa", "Arteaga", "BXD-017", "Plan Regular", "01/05/2022", 2, 2, 2],
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8486 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n          Me gustaría que me aconsejaran sobre mi seguro de coche. El 27 de Mayo sufrí el robo de partes de mi auto.\n        El robo fue de la radio y la rueda de repuesto. Esto sucedió en la intersección de la calle Quinta con la \n            Tercera Avenida. Me gustaría saber si el seguro del vehículo que tengo cubre esto. Si la respuesta es sí, \n          por favor hágamelo saber lo antes posible para hacer los arreglos correspondientes.<br><br>\n     Gracias de antemano por su ayuda.<br>\n                 Atentamente<br>\n             Jesus Walker",
+      "Complejo": false,
+      "TiempoEnvio": 147,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Jesus", "Walker", "BXD-012", "Plan Diamante", "01/09/2022", 1, 1, 1],
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8487 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quiero preguntar sobre mi seguro de automóvil. El 26 de Mayo, tuve un pequeño accidente en el que resultó\n dañado otro automóvil. En particular, el otro automóvil tiene daños en el parachoques trasero.\n Quisiera saber si el seguro del vehículo que tengo con ustedes cubre esto. Si la respuesta es afirmativa,\n quisiera información sobre los pasos que debo seguir para activar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente<br>\nMaria Sinfuentes",
+      "Complejo": false,
+      "TiempoEnvio": 254,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Maria", "Sinfuentes", "BXD-003", "Plan Diamante", "01/12/2022", 1, 1, 1],
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8485 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n          El 5 de junio hice un viaje por carretera hacia el norte, choqué mi automóvil con otro automóvil y se\n          rompieron los parachoques. El choque se produjo de tarde y fue muy fuerte. Mi amigo y yo estábamos en el auto,\n          ambos salimos ilesos. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este tipo de accidentes.<br><br>\n          Quedo a la espera de su amable respuesta.<br>\n          Atentamente,<br>\n          Astrid Wilson",
+      "Complejo": true,
+      "TiempoEnvio": 0,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Astrid", "Wilson", "BXD-011", "Plan Oro", "01/08/2022", 1, 1, "Maria Perez", "ROC - 2211", 1, 1],
+      "Reporte": "technical_report_7.png",
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8489 - RECLAMO",
+      "Texto": "Estimados señores o señora,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. La semana pasada, tuve un accidente y se dañó la\n parte delantera de mi automóvil. Precisamente, el paragolpes quedó destrozado. Además de eso,\n causé daños a un automóvil extranjero, donde rayé la ventana delantera y se destruyeron el parachoques y \nla luz delantera. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este tipo de \n accidentes. Si la respuesta es sí, me gustaría obtener más información al respecto.<br><br>\n Espero su respuesta.\n Atentamente,<br>\n William Rivera",
+      "Complejo": true,
+      "TiempoEnvio": 739,
+      "TiempoSolucion": 0,
+      "Respuestas": ["William", "Rivera", "BXD-016", "Plan Regular", "01/08/2022", 1, 2, "Matheo Morgan", "TUH - 1044", 1, 2],
+      "Reporte": "technical_report_1.png",
+      "Visible": true
+    },
+    
+    {
+      "Asunto": "CASO 8488 - RECLAMO URGENTE",
+      "Texto": "Estimados señores o señoras,<br><br>\nQuiero preguntarle sobre mi seguro de automóvil. Ayer tuve un accidente de coche en el que me fracturé\n el tobillo. Me gustaría saber si el seguro del vehículo puede cubrir mis gastos médicos y \n técnicos. La respuesta a esto es crítica porque si es posible, tal vez pueda ir a una clínica privada.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente,<br>\nAlannis Diaz",
+      "Complejo": false,
+      "TiempoEnvio": 544,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Alannis", "Diaz", "BXD-014", "Plan Plata", "01/11/2022", 1, 2, 2],
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8490 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n El 27 de Mayo conduje a la ciudad vecina con mi novio. Para llegar a esta ciudad, tuve que pasar\n por un camino no autorizado, ya que era la ruta más corta para llegar a mi destino. Como eran\n más de las 10 de la noche, no me di cuenta de que había un letrero que me informaba sobre un camino no autorizado.\n Como resultado, entré en un camino sin terminar y tuve un accidente menor. El auto tenía daños en la parte\n delantera. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este\n tipo de accidentes. Su respuesta me ayudará a hacer los arreglos correspondientes.<br><br>\nQuedo a la espera de su amable respuesta.\nAtentamente,<br>\nNickole Rojas",
+      "Complejo": true,
+      "TiempoEnvio": 1270,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Nickole", "Rojas", "BXD-016", "Plan Diamante", "01/03/2022", 2, 1, "Merry Valverde", "DEA - 2214", 1, 2],
+      "Reporte": "technical_report_3.png",
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8492 - RECLAMO URGENTE",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. El 26 de Mayo  tuve un accidente \nautomovilístico en el que se dañó la pintura de mi auto en la puerta del conductor. Es más, me golpeé la \nfrente. Ayer tuve dolor y me he automedicado; sin embargo, el dolor persiste hasta el día de hoy \ny con mayor intensidad. Quisiera saber si puedo ir a un hospital privado cubierto por el seguro de mi vehículo.\n Mi coche también está en el taller mecánico. Es importante para mí si el seguro puede \n cubrir mi tratamiento médico.<br><br>\nQuedo a la espera de su amable respuesta.\nAtentamente,<br>\nPaty Jimenez",
+      "Complejo": false,
+      "TiempoEnvio": 1587,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Paty", "Jimenez", "BXD-010", "Plan Oro", "01/07/2022", 1, 1, 1],
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8491 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\nAyer en un viaje por carretera hacia el sur, choqué mi automóvil con otro automóvil y \nse rompieron los parachoques. El choque se produjo de noche y fue muy fuerte. Mi amigo y yo estábamos en el \nauto, ambos salimos ilesos. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este\n tipo de accidentes.<br><br>\n Quedo a la espera de su amable respuesta.\n Atentamente,<br>\nBenny Garcia",
+      "Complejo": true,
+      "TiempoEnvio": 1328,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Benny", "Garcia", "BXD-020", "Plan Regular", "01/08/2022", 1, 2, "Alanis Belevan", "MIA-3314", 1, 2],
+      "Reporte": "technical_report_5.png",
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8494 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. El 28 de Mayo noté una falla mecánica \n en el motor del auto, por lo que me gustaría tomar un servicio adicional para la asistencia del \n vehículo. Me gustaría saber si el seguro del vehículo que tengo con ustedes cubre esta avería. Si la respuesta \n es afirmativa, quisiera información sobre los pasos que debo seguir para activar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente <br>\n Abraham Smith",
+      "Complejo": false,
+      "TiempoEnvio": 2392,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Abraham", "Smith", " BXD-009", "Plan Plata", "01/08/2022", 1, 2, 2],
+      "Visible": true
+
+    },
+    {
+      "Asunto": "CASO 8496 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quisiera consultar sobre mi seguro de auto. El 27 de Mayo  participé en una carrera de autos \n que se llevó a cabo para recaudar fondos para niños con discapacidades motoras. Durante esta carrera, \n hubo un accidente colectivo, donde mi auto sufrió daños menores. Quisiera consultar sobre mi \ncobertura con respecto a este evento. Si la respuesta es afirmativa, quisiera información sobre los pasos \n que debo seguir para activar mi seguro de vehículo.<br><br>\nGracias de antemano por su ayuda.\nAtentamente,<br>\n Micaela Harris",
+      "Complejo": false,
+      "TiempoEnvio": 2526,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Micaela", "Harris", "BXD-008", "Plan Regular", "01/05/2022", 2, 2, 2],
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8493 - RECLAMO URGENTE",
+      "Texto": "Estimados señores o señora,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. Hace dos días, tuve un grave accidente\n automovilístico, donde sufrí un golpe en el brazo izquierdo. Me comuniqué con usted y enviaron un \n inspector para revisar lo sucedido. El Sr. August Marruecos, que vino a revisar el accidente, me dijo que\n la compañía de seguros trabajará para obtener una compensación por las lesiones y daños a mi vehículo. \n Sin embargo, hasta la fecha no se ha recibido ninguna comunicación por su parte. Quisiera saber si el \n seguro del vehículo que tengo con ustedes cubre esto. Si la respuesta es afirmativa, me gustaría recibir\n información sobre los pasos que debo seguir para utilizar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\n Atentamente, <br>\n Adrian Molina",
+      "Complejo": true,
+      "TiempoEnvio": 1679,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Adrian", "Molina", "BXD-001", "Plan Oro", "01/10/2022", 1, 1, "Mario Valencia", "TAH - 1014", 1, 1],
+      "Reporte": "technical_report_2.png",
+      "Visible": true
+    },
+
+
+  ];
+
+  // Variables inicializadas
+  let start_time = Date.now();
+  let end_time = null;
+
+  let inbox = 0;
+  let wip = 0;
+
+  let intr_list_id = [1];
+  let intr_list_time = [0];
+
+  let prev_case = 0;
+  let cur_case = intr_list_id[0];
+
+  // Construye y renderiza la lista de casos
+  function build_case() {
+    var case_container = document.getElementById('case-container');
+    case_container.innerHTML = '';
+
+    for (var i = 0; i < case_list.length; i++) {
+      var case_id = i + 1;
+      var case_value = case_list[i];
+
+      if (case_value.Complejo) {
+        var complex_template_copy = complex_template;
+        complex_template_copy = complex_template_copy.replaceAll('{case_id}', case_id.toString());
+        complex_template_copy = complex_template_copy.replaceAll('{case_texto}', case_value.Texto);
+        complex_template_copy = complex_template_copy.replaceAll('{case_asunto}', case_value.Asunto);
+        complex_template_copy = complex_template_copy.replaceAll('{case_reporte}', case_value.Reporte);
+        case_container.innerHTML += complex_template_copy;
+      }
+      else {
+        var simple_template_copy = simple_template;
+        simple_template_copy = simple_template_copy.replaceAll('{case_id}', case_id.toString());
+        simple_template_copy = simple_template_copy.replaceAll('{case_texto}', case_value.Texto);
+        simple_template_copy = simple_template_copy.replaceAll('{case_asunto}', case_value.Asunto);
+        case_container.innerHTML += simple_template_copy;
+      }
+    }
+  }
+
+
+    //Mostrar el primer caso
+    function show_case() {
+    if (case_list.length) {
+      var first_case = document.getElementById('case-1');
+      first_case.style.display = 'block';
+    }
+  }
+
+  //Mostrar el siguiente caso
+  function show_next_case(case_id) {
+    // Ocultar el caso actual
+    var first_case = document.getElementById('case-' + case_id.toString());
+    first_case.style.display = 'none';
+
+    // Mostrar el siguiente caso
+    let next_case_id =  case_id + 1
+    var next_case = document.getElementById('case-' + next_case_id.toString());
+    next_case.style.display = 'block';
+    window.scrollTo(0, 0);
+
+    // Ocultar el boton de Siguiente caso para el ultimo caso
+    if (case_list.length == case_id + 1) {
+      let next_case_id = case_id + 1
+      var next_case = document.getElementById('next-case-btn-'+ next_case_id.toString());
+      next_case.style.display = 'none';
+    }
+  }
+
+  // Construye un input por cada caso para almacenar datos como 
+  // Urgencia: si el caso es complejo o no
+  // Hora de inicio: tiempo de envio del caso
+  // Hora fin: hora en que se resulve el caso con todas las respuestas correctas
+  // Hora de solucion: Hora en que se empieza a resolver el caso (Ingreso de datos en el input)
+  // Cantidad de errores: Cantidad de errores de cada caso
+
+  function build_extra() {
+    var extra_container = document.getElementById('extra-container');
+    var extra_template =  `
+      <input type="text" name="case_{case_id}_urgent" id="case_{case_id}_urgent" />
+      <input type="text" name="case_{case_id}_start_time" id="case_{case_id}_start_time" />
+      <input type="text" name="case_{case_id}_end_time" id="case_{case_id}_end_time" />
+      <input type="text" name="case_{case_id}_solution_time" id="case_{case_id}_solution_time" />
+      <input type="text" name="case_{case_id}_error_count" id="case_{case_id}_error_count" value="0" />
+    `;
+
+    for (var i = 0; i < case_list.length; i++) {
+      let extra_template_copy = extra_template;
+      extra_container.innerHTML += extra_template_copy.replaceAll('{case_id}', i + 1);
+    }
+  }
+
+  // Renderiza el temporizador en cuenta regresiva
+  // El limite de tiempo se define en timeout_seconds de la pagina TasksProgressBar
+  function build_timer() {
+    $('.otree-timer').hide();
+    document.addEventListener("DOMContentLoaded", function (event) {
+      $('.otree-timer__time-left').on('update.countdown', function (event) {
+        let totalSeconds = event.offset.totalSeconds;
+        let timeLeftElem = document.getElementById('time-left');
+        timeLeftElem.innerHTML = '<h>:<m>'.replace('<h>', Math.floor(totalSeconds / 60)).replace('<m>', String(totalSeconds % 60).padStart(2, "0"));
+        if (event.offset.totalSeconds === 60) {
+          $('.otree-timer').show();
+        }
+        if (event.offset.totalSeconds === 1) {
+          var end_date_elem = document.getElementById('end_date');
+          end_date_elem.value = Date.now();
+        }
+      });
+    });
+  }
+
+  // Actualiza la hora de inicio y urgencia de cada caso, asi como la hora de inicio del formulario
+  function build_alert() {
+        for (var i = 0; i < case_list.length; i++) {
+      var start_elem = document.getElementById('case_' + (i + 1).toString() + '_start_time');
+      start_elem.value = case_list[i].TiempoEnvio;
+      let urgent_elem = document.getElementById('case_' + (i + 1).toString() + '_urgent');
+      urgent_elem.value = case_list[i].Complejo;
+    }
+    var start_date_elem = document.getElementById('start_date');
+    start_date_elem.value = start_time;
+  }
+
+  // Genera una array con las respuestas de un caso en especifico
+  function case_result(id) {
+    let case_elem = document.getElementById('case-' + (id + 1).toString());
+    let input_list = case_elem.getElementsByTagName('input');
+    let ans_list = [];
+
+    let item_id_prev = '';
+    let item_value_prev = -1;
+
+    for (var i = 0; i < input_list.length; i++) {
+      let input_item = input_list[i];
+      if (input_item.id.search('-') == -1) {
+        if (item_id_prev != '') {
+          ans_list.push(item_value_prev);
+          item_value_prev = -1;
+          item_id_prev = '';
+        }
+        if (input_item.type == 'date' && input_item.value != '') {
+          let date_item = input_item.value.split('-');
+          ans_list.push(date_item[2] + '/' + date_item[1] + '/' + date_item[0]);
+        } else {
+          ans_list.push(input_item.value);
+        }
+      } else {
+        let item_id = input_item.id.split('-')[0];
+        let sub_item_id = input_item.id.split('-')[1];
+
+        if (item_id_prev == '') {
+          item_id_prev = item_id;
+        }
+
+        if (item_id_prev != item_id) {
+          ans_list.push(item_value_prev);
+          item_value_prev = -1;
+          item_id_prev = item_id;
+        }
+
+        if (input_item.checked) {
+          item_value_prev = input_item.value;
+        }
+      }
+    }
+    if (item_id_prev != '') {
+      ans_list.push(item_value_prev);
+      item_value_prev = -1;
+      item_id_prev = '';
+    }
+
+    input_list = case_elem.getElementsByTagName('textarea');
+
+    for (var i = 0; i < input_list.length; i++) {
+      let input_item = input_list[i];
+      ans_list.push(input_item.value);
+    }
+
+    return ans_list;
+  }
+
+  // Funcion que se ejecuta al ingresar un valor en los campos de un caso.
+  // Actualiza el tiempo de solución del caso (hora de inicio - hora actual) cuando se ingresa un valor por primera
+  // vez en los campos del caso, registra el tiempo en segundos.
+  // Actualiza el trabajo en curso.
+  function input_event(input_name, id) {
+    //Se retira el mensaje de error del input cuando se esta ingresando un valor
+    var question_error_elem = document.getElementById(input_name + '-error');
+    question_error_elem.style.display = 'none';
+  
+    if (case_list[id].TiempoSolucion == 0) {
+      var solution_elem = document.getElementById('case_' + (id + 1).toString() + '_solution_time');
+      var solution_time = (Date.now() - start_time) / 1000;
+
+      case_list[id].TiempoSolucion = solution_time;
+      solution_elem.value = solution_time;
+
+      create_intr(id) 
+    }
+
+  }
+
+ // Asigna la funcion input_event a los campos de cada caso
+  function build_event() {
+    let input_list = [];
+    for (var i = 0; i < case_list.length; i++) {
+      let case_elem = document.getElementById('case-' + (i + 1).toString());
+      let input_list = case_elem.getElementsByTagName('input');
+      for (var j = 0; j < input_list.length; j++) {
+        let input_item = input_list[j];
+        input_item.addEventListener('input', input_event.bind(null, input_item.name, i));
+      }
+      input_list = case_elem.getElementsByTagName('textarea');
+      for (var j = 0; j < input_list.length; j++) {
+        let input_item = input_list[j];
+        input_item.addEventListener('input', input_event.bind(null, input_item.name, i));
+      }
+    }
+  }
+
+  // Funcion principal que renderiza el UI y ejecuta las funciones
+  function build_page() {
+    build_case();
+    show_case()
+    build_extra();
+    build_timer();
+    build_alert();
+    build_event();
+  }
+
+  function create_intr(id) {
+    if ((id + 1) == cur_case) {
+      return;
+    }
+
+    let intr_time = (Date.now() - start_time) / 1000;
+
+    if (id != -1 && case_list[id].TiempoSolucion == 0) {
+      intr_list_id.push(id + 1);
+    } else {
+      intr_list_id.push((id + 1) * -1);
+    }
+
+    intr_list_time.push(intr_time);
+
+    let intr_id_elem = document.getElementById('list_intr_id');
+    let intr_time_elem = document.getElementById('list_intr_time');
+
+    intr_id_elem.value = intr_list_id.toString();
+    intr_time_elem.value = intr_list_time.toString();
+
+    prev_case = cur_case - 1;
+    cur_case = id + 1;
+  }
+
+
+  // Retorna una lista con los nombres de las preguntas de un caso en especifico
+  function case_question(id) {
+    let case_elem = document.getElementById('case-' + (id + 1).toString());
+    let input_list = case_elem.getElementsByTagName('input');
+    let question_list = [];
+
+    for (var i = 0; i < input_list.length; i++) {
+      let input_item = input_list[i];
+      let item_name = input_item.name;
+      
+      if (question_list.length == 0) {
+        question_list.push(item_name);
+      } else {
+        if (question_list[question_list.length - 1] != item_name) {
+          question_list.push(item_name);
+        }
+      }
+    }
+
+    input_list = case_elem.getElementsByTagName('textarea');
+
+    for (var i = 0; i < input_list.length; i++) {
+      let input_item = input_list[i];
+      question_list.push(input_item.name);
+    }
+
+    return question_list;
+  }
+
+
+  // Valida si las respuestas de un caso son correctas y retorna true/false 
+  // Muestra una alerta en cada pregunta en caso sea incorrecta
+  function case_validate(id, show_alert=true) {
+    let result = case_result(id);
+    let question = case_question(id);
+    let is_correct = true;
+    
+    for (var i = 0; i < result.length; i++) {
+      if (case_list[id].Respuestas[i] == 'respuesta libre' && result[i] != '') {
+        continue;
+      }
+      if (case_list[id].Respuestas[i] != result[i]) {
+        is_correct = false;
+        if (show_alert) {
+          var question_error_elem = document.getElementById(question[i] + '-error');
+          question_error_elem.style.display = 'block';
+        }
+      }
+    }
+
+    return is_correct;
+  }
+   
+  // Funcion que se ejecuta con el boton "validar caso" 
+  // Renderiza un mensaje de respuestas correctas o incorrectas segun lo que se obtenga de case_validate() (true/false)
+  function case_validate_button(case_id) {
+    
+    if (case_validate(case_id - 1)) {
+      //Renderiza la alerta de respuestas correctas por 5 segundos
+      let correct_elem = document.getElementById(case_id.toString() + '-alert-correct-answer');
+      correct_elem.style.display = 'block';
+      setTimeout(function () { correct_elem.style.display = 'none'; }, 5 * 1000);
+
+      //case_list.splice(case_id - 1, 1);
+     
+      case_list[case_id -1].Visible = false
+
+      // Registra los el tiempo en que se resolvio el caso
+      var end_elem = document.getElementById('case_' + case_id.toString() + '_end_time');
+      end_elem.value = ((Date.now() - start_time) / 1000);
+      
+      // Habilita el boton de Siguiente caso
+      var next_case = document.getElementById('next-case-btn-' + case_id.toString());
+      next_case.disabled = false;
+
+      // Valida si todas las respuestas con correctas para mostrar el boton de Finalizar
+      let all_correct = true;
+      for (var i = 0; i < case_list.length; i++) {
+        if (i == (case_id - 1)) {
+          continue;
+        }
+        if (!case_validate(i, false)) {
+          all_correct = false;
+          break;
+        }
+      }
+      if (all_correct) {
+      
+        var submit_elem = document.getElementById('submit-button');
+        submit_elem.style.display = 'block';
+
+        //palabra
+      }
+    } else {
+      let error_elem = document.getElementById(case_id.toString() + '-alert-wrong-answer');
+      error_elem.style.display = 'block';
+      setTimeout(function () { error_elem.style.display = 'none'; }, 5 * 1000);
+      let error_count_elem = document.getElementById('case_' + case_id.toString() + '_error_count');
+      error_count_elem.value = parseInt(error_count_elem.value) + 1;
+    }
+  }
+
+  // Funcion que se ejecuta con el boton "Siguiente" 
+  // Valida las respuestas de todos los casos y en caso haya errores lo almacena en el input error de cada caso.
+  // En caso no haya errores almacena la hora en que se termino en el input end_date
+  function validate_answers() {
+    let error_count = 0
+    for (var i = 0; i < case_list.length; i++) {
+      if (!case_validate(i)) {
+        error_count++;
+        var error_count_elem = document.getElementById('case_' + (i + 1).toString() + '_error_count');
+        error_count_elem.value = parseInt(error_count_elem.value) + 1;
+
+      }
+    }
+    if (error_count > 0) {
+      let error_elem = document.getElementById('alert-wrong-answer');
+      error_elem.style.display = 'block';
+      setTimeout(function () { error_elem.style.display = 'none'; }, 5 * 1000);
+      return false;
+    } else {
+      var end_date_elem = document.getElementById('end_date');
+      end_date_elem.value = Date.now();
+      return true;
+    }
+  }
+
+  build_page();
+
+</script>
+
+<div class="alert alert-danger" role="alert" id="alert-wrong-answer" style="display: none;">
+  Algunas respuestas estan mal
+</div>
+
+<div class="alert alert-success" role="alert" id="alert-correct-answer" style="display: none;">
+  Las respuestas estan correctas
+</div>
+
+<!-- Boton se muestra cuando todos los casos se respondieron de forma correcta -->
+<div class="d-flex flex-row-reverse">
+  <button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
+    Finalizar
+  </button>
+</div>
+
+{{ endblock }}

@@ -778,14 +778,15 @@ class TasksProgressBar(Page):
     ]
     pass
 
+# PAGINA CASOS DE PRUEBA
 class TaskTest(Page):    
     #La cantidad de casos se define en el archivo TaskTest.html variable case_list
     pass
 
-# Pagina de Calibracion: contiene 12 casos, 7 normales y 5 complejos
-#La cantidad de casos se define en el archivo TasksCalibration.html variable case_list
+
+# PAGINA DE CALIBRACION: contiene 12 casos, 7 normales y 5 complejos
 class TasksCalibration(Page):    
-    timeout_seconds = 1 * 60
+    timeout_seconds = 20 * 60 #20 minutos
     form_model = 'player'
     form_fields = [
         #Casos normales
@@ -814,8 +815,15 @@ class TasksCalibration(Page):
     ]
     pass
 
+# PAGINA - Da lo mejor:
+class TasksDoYourBest(Page):    
+    timeout_seconds = 5 * 60 #5 minutos
+    #La cantidad de casos se define en el archivo TasksDoYourBest.html variable case_list
+    pass
+
+# PAGINA DE EXPERIMENTOS: contiene 12 casos, 7 normales y 5 complejos
 class TasksExperiment(Page):    
-    timeout_seconds = 20 * 60
+    timeout_seconds = 20 * 60 #20 minutos
     form_model = 'player'
     form_fields = [
         'case_1_step_1_nombre', 'case_1_step_1_apellido', 'case_1_step_1_codigo', 'case_1_step_1_tipo_seguro', 'case_1_step_1_fecha_vencimiento', 'case_1_step_2_1', 'case_1_step_3_1', 'case_1_step_4_1',
@@ -921,5 +929,8 @@ class FlowQuiz(Page):
     pass
 
 #page_sequence = [DatosQuiz, Instrucciones, AtentionQuiz, BeginQuiz, MultiQuiz, Task, EndQuiz, FlowQuiz] #DatosQuiz,Instrucciones, AtentionQuiz, BeginQuiz,MultiQuiz, Task, EndQuiz, FlowQuiz
+
+
 #page_sequence = [Instrucciones, TaskTest, TasksCalibration, Results,  EndQuiz]
-page_sequence = [TasksExperiment, Results]
+#page_sequence = [Instrucciones, TaskTest, TasksDoYourBest, TasksExperiment, Results, EndQuiz]
+page_sequence = [TasksDoYourBest]
