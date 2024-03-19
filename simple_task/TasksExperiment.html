@@ -66,49 +66,23 @@
   }
 </style>
 
-<!-- Seccion de barra de progreso -->
-<div style="width: 100%; border-color: #212529; border-width: 1px; border-style: dashed">
-    <div id="myBar" class="w3-green" style="height:24px;width:0"></div>
+<div style="display: flex; justify-content: space-between;">
+  <h5 id="goal-title"></h5>
+  <h5 id="wip-title"></h5>
 </div>
-<div style="padding-top: 24px;"></div>
+
+<!-- Seccion barra de progreso -->
+<div class="progress" style="margin-bottom: 36px;">
+  <div id="myBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+</div>
+
 
 <!-- Seccion de tiempo restante y lista de casos -->
 <div class="row">
-
-  <div class="col-12 open-inbox">
-    
-    <!-- <div class="side-section">
-      <h3>Correo</h3>
-      <button type="button" onclick="close_inbox()" class="btn btn-primary">
-        Cerrar Bandeja
-      </button>
-      <h3></h3>
-      <div class="email">
-        <ul class="list-group" id="email-group">
-        </ul>
-      </div>
-    </div> -->
-  </div>
   <div class="col-4 close-inbox">
-    <!-- <div class="side-section">
-      <h3>Correo</h3>
-      <button type="button" onclick="open_inbox()" class="btn btn-primary position-relative">
-        Abrir Bandeja
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="unread-msg"
-          style="display: none">
-        </span>
-      </button>
-    </div> -->
     <div class="side-section">
       <h3>Tiempo Restante</h3>
       <h1 id="time-left" style="text-align:center"></h1>
-    </div>
-    <div class="side-section">
-      <h3>Trabajo en proceso</h3>
-      <div class="wip">
-        <ul class="list-group" id="wip-group">
-        </ul>
-      </div>
     </div>
   </div>
   
@@ -127,10 +101,9 @@
 <!-- <script type="module" src="caseList.js"></script> -->
 
 <script>
-
   // Template de casos simples
   var simple_template = `
-    <div id="case-{case_id}" class="case">
+    <div id="case-{case_id}" class="case" style="display: none;">
         <div class="case-section">
           <h3>{case_asunto}</h3>
           <p>
@@ -441,11 +414,23 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12" style="text-align:right">
-              <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
-                Validar caso
-              </button>
+            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none; margin-top: 24px;">
+              Algunas respuestas estan mal
             </div>
+
+            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none; margin-top: 24px;">
+              Las respuestas estan correctas.
+            </div>
+            
+            <div class="col-md-12" style="display: flex; gap: 24px; justify-content: flex-end; margin-top: 24px;">
+                  <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
+                    Validar caso
+                  </button>
+                  <button disabled type="button" id="next-case-btn-{case_id}" onclick="show_next_case({case_id})" class="btn btn-success">
+                    Siguiente caso
+                  </button>
+              </div>
+             
           </div>
         </div>
       </div>
@@ -453,7 +438,7 @@
 
   // Template de casos complejos
   var complex_template = `
-  <div id="case-{case_id}" class="case">
+  <div id="case-{case_id}" class="case" style="display: none;">
       <div class="case-section">
         <h3>{case_asunto}</h3>
         <p>
@@ -808,16 +793,27 @@
           </div>
         </div>
         <div class="row">
-            <div class="col-md-12" style="text-align:right">
-              <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
-                Validar caso
-              </button>
+            <div class="alert alert-danger" role="alert" id="{case_id}-alert-wrong-answer" style="display: none; margin-top: 24px;">
+              Algunas respuestas estan mal
             </div>
+
+            <div class="alert alert-success" role="alert" id="{case_id}-alert-correct-answer" style="display: none; margin-top: 24px;">
+              Las respuestas estan correctas.
+            </div>
+            
+            <div class="col-md-12" style="display: flex; gap: 24px; justify-content: flex-end; margin-top: 24px;">
+                  <button type="button" onclick="case_validate_button({case_id})" class="btn btn-primary">
+                    Validar caso
+                  </button>
+                  <button disabled type="button" id="next-case-btn-{case_id}" onclick="show_next_case({case_id})" class="btn btn-success">
+                    Siguiente caso
+                  </button>
+              </div>
+             
           </div>
       </div>
     </div>
   `;
-
 
   // Lista de casos
   var case_list = [
@@ -830,7 +826,24 @@
       "Respuestas": ["Vanessa", "Arteaga", "BXD-017", "Plan Regular", "01/05/2022", 2, 2, 2],
       "Visible": true
     },
-
+    {
+      "Asunto": "CASO 8486 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n          Me gustaría que me aconsejaran sobre mi seguro de coche. El 27 de Mayo sufrí el robo de partes de mi auto.\n        El robo fue de la radio y la rueda de repuesto. Esto sucedió en la intersección de la calle Quinta con la \n            Tercera Avenida. Me gustaría saber si el seguro del vehículo que tengo cubre esto. Si la respuesta es sí, \n          por favor hágamelo saber lo antes posible para hacer los arreglos correspondientes.<br><br>\n     Gracias de antemano por su ayuda.<br>\n                 Atentamente<br>\n             Jesus Walker",
+      "Complejo": false,
+      "TiempoEnvio": 147,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Jesus", "Walker", "BXD-012", "Plan Diamante", "01/09/2022", 1, 1, 1],
+      "Visible": true
+    },
+    {
+      "Asunto": "CASO 8487 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quiero preguntar sobre mi seguro de automóvil. El 26 de Mayo, tuve un pequeño accidente en el que resultó\n dañado otro automóvil. En particular, el otro automóvil tiene daños en el parachoques trasero.\n Quisiera saber si el seguro del vehículo que tengo con ustedes cubre esto. Si la respuesta es afirmativa,\n quisiera información sobre los pasos que debo seguir para activar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente<br>\nMaria Sinfuentes",
+      "Complejo": false,
+      "TiempoEnvio": 254,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Maria", "Sinfuentes", "BXD-003", "Plan Diamante", "01/12/2022", 1, 1, 1],
+      "Visible": true
+    },
     {
       "Asunto": "CASO 8485 - RECLAMO",
       "Texto": "Estimados señores o señoras,<br><br>\n          El 5 de junio hice un viaje por carretera hacia el norte, choqué mi automóvil con otro automóvil y se\n          rompieron los parachoques. El choque se produjo de tarde y fue muy fuerte. Mi amigo y yo estábamos en el auto,\n          ambos salimos ilesos. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este tipo de accidentes.<br><br>\n          Quedo a la espera de su amable respuesta.<br>\n          Atentamente,<br>\n          Astrid Wilson",
@@ -841,37 +854,6 @@
       "Reporte": "technical_report_7.png",
       "Visible": true
     },
-
-    {
-      "Asunto": "CASO 8486 - RECLAMO",
-      "Texto": "Estimados señores o señoras,<br><br>\n          Me gustaría que me aconsejaran sobre mi seguro de coche. El 27 de Mayo sufrí el robo de partes de mi auto.\n        El robo fue de la radio y la rueda de repuesto. Esto sucedió en la intersección de la calle Quinta con la \n            Tercera Avenida. Me gustaría saber si el seguro del vehículo que tengo cubre esto. Si la respuesta es sí, \n          por favor hágamelo saber lo antes posible para hacer los arreglos correspondientes.<br><br>\n     Gracias de antemano por su ayuda.<br>\n                 Atentamente<br>\n             Jesus Walker",
-      "Complejo": false,
-      "TiempoEnvio": 147,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Jesus", "Walker", "BXD-012", "Plan Diamante", "01/09/2022", 1, 1, 1],
-      "Visible": true
-    },
-
-    {
-      "Asunto": "CASO 8487 - RECLAMO",
-      "Texto": "Estimados señores o señoras,<br><br>\n Quiero preguntar sobre mi seguro de automóvil. El 26 de Mayo, tuve un pequeño accidente en el que resultó\n dañado otro automóvil. En particular, el otro automóvil tiene daños en el parachoques trasero.\n Quisiera saber si el seguro del vehículo que tengo con ustedes cubre esto. Si la respuesta es afirmativa,\n quisiera información sobre los pasos que debo seguir para activar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente<br>\nMaria Sinfuentes",
-      "Complejo": false,
-      "TiempoEnvio": 254,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Maria", "Sinfuentes", "BXD-003", "Plan Diamante", "01/12/2022", 1, 1, 1],
-      "Visible": true
-    },
-
-    {
-      "Asunto": "CASO 8488 - RECLAMO URGENTE",
-      "Texto": "Estimados señores o señoras,<br><br>\nQuiero preguntarle sobre mi seguro de automóvil. Ayer tuve un accidente de coche en el que me fracturé\n el tobillo. Me gustaría saber si el seguro del vehículo puede cubrir mis gastos médicos y \n técnicos. La respuesta a esto es crítica porque si es posible, tal vez pueda ir a una clínica privada.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente,<br>\nAlannis Diaz",
-      "Complejo": false,
-      "TiempoEnvio": 544,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Alannis", "Diaz", "BXD-014", "Plan Plata", "01/11/2022", 1, 2, 2],
-      "Visible": true
-    },
-
     {
       "Asunto": "CASO 8489 - RECLAMO",
       "Texto": "Estimados señores o señora,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. La semana pasada, tuve un accidente y se dañó la\n parte delantera de mi automóvil. Precisamente, el paragolpes quedó destrozado. Además de eso,\n causé daños a un automóvil extranjero, donde rayé la ventana delantera y se destruyeron el parachoques y \nla luz delantera. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este tipo de \n accidentes. Si la respuesta es sí, me gustaría obtener más información al respecto.<br><br>\n Espero su respuesta.\n Atentamente,<br>\n William Rivera",
@@ -882,7 +864,16 @@
       "Reporte": "technical_report_1.png",
       "Visible": true
     },
-
+    
+    {
+      "Asunto": "CASO 8488 - RECLAMO URGENTE",
+      "Texto": "Estimados señores o señoras,<br><br>\nQuiero preguntarle sobre mi seguro de automóvil. Ayer tuve un accidente de coche en el que me fracturé\n el tobillo. Me gustaría saber si el seguro del vehículo puede cubrir mis gastos médicos y \n técnicos. La respuesta a esto es crítica porque si es posible, tal vez pueda ir a una clínica privada.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente,<br>\nAlannis Diaz",
+      "Complejo": false,
+      "TiempoEnvio": 544,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Alannis", "Diaz", "BXD-014", "Plan Plata", "01/11/2022", 1, 2, 2],
+      "Visible": true
+    },
     {
       "Asunto": "CASO 8490 - RECLAMO",
       "Texto": "Estimados señores o señoras,<br><br>\n El 27 de Mayo conduje a la ciudad vecina con mi novio. Para llegar a esta ciudad, tuve que pasar\n por un camino no autorizado, ya que era la ruta más corta para llegar a mi destino. Como eran\n más de las 10 de la noche, no me di cuenta de que había un letrero que me informaba sobre un camino no autorizado.\n Como resultado, entré en un camino sin terminar y tuve un accidente menor. El auto tenía daños en la parte\n delantera. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este\n tipo de accidentes. Su respuesta me ayudará a hacer los arreglos correspondientes.<br><br>\nQuedo a la espera de su amable respuesta.\nAtentamente,<br>\nNickole Rojas",
@@ -893,7 +884,15 @@
       "Reporte": "technical_report_3.png",
       "Visible": true
     },
-
+    {
+      "Asunto": "CASO 8492 - RECLAMO URGENTE",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. El 26 de Mayo  tuve un accidente \nautomovilístico en el que se dañó la pintura de mi auto en la puerta del conductor. Es más, me golpeé la \nfrente. Ayer tuve dolor y me he automedicado; sin embargo, el dolor persiste hasta el día de hoy \ny con mayor intensidad. Quisiera saber si puedo ir a un hospital privado cubierto por el seguro de mi vehículo.\n Mi coche también está en el taller mecánico. Es importante para mí si el seguro puede \n cubrir mi tratamiento médico.<br><br>\nQuedo a la espera de su amable respuesta.\nAtentamente,<br>\nPaty Jimenez",
+      "Complejo": false,
+      "TiempoEnvio": 1587,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Paty", "Jimenez", "BXD-010", "Plan Oro", "01/07/2022", 1, 1, 1],
+      "Visible": true
+    },
     {
       "Asunto": "CASO 8491 - RECLAMO",
       "Texto": "Estimados señores o señoras,<br><br>\nAyer en un viaje por carretera hacia el sur, choqué mi automóvil con otro automóvil y \nse rompieron los parachoques. El choque se produjo de noche y fue muy fuerte. Mi amigo y yo estábamos en el \nauto, ambos salimos ilesos. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este\n tipo de accidentes.<br><br>\n Quedo a la espera de su amable respuesta.\n Atentamente,<br>\nBenny Garcia",
@@ -904,17 +903,25 @@
       "Reporte": "technical_report_5.png",
       "Visible": true
     },
-
     {
-      "Asunto": "CASO 8492 - RECLAMO URGENTE",
-      "Texto": "Estimados señores o señoras,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. El 26 de Mayo  tuve un accidente \nautomovilístico en el que se dañó la pintura de mi auto en la puerta del conductor. Es más, me golpeé la \nfrente. Ayer tuve dolor y me he automedicado; sin embargo, el dolor persiste hasta el día de hoy \ny con mayor intensidad. Quisiera saber si puedo ir a un hospital privado cubierto por el seguro de mi vehículo.\n Mi coche también está en el taller mecánico. Es importante para mí si el seguro puede \n cubrir mi tratamiento médico.<br><br>\nQuedo a la espera de su amable respuesta.\nAtentamente,<br>\nPaty Jimenez",
+      "Asunto": "CASO 8494 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. El 28 de Mayo noté una falla mecánica \n en el motor del auto, por lo que me gustaría tomar un servicio adicional para la asistencia del \n vehículo. Me gustaría saber si el seguro del vehículo que tengo con ustedes cubre esta avería. Si la respuesta \n es afirmativa, quisiera información sobre los pasos que debo seguir para activar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente <br>\n Abraham Smith",
       "Complejo": false,
-      "TiempoEnvio": 1587,
+      "TiempoEnvio": 2392,
       "TiempoSolucion": 0,
-      "Respuestas": ["Paty", "Jimenez", "BXD-010", "Plan Oro", "01/07/2022", 1, 1, 1],
+      "Respuestas": ["Abraham", "Smith", " BXD-009", "Plan Plata", "01/08/2022", 1, 2, 2],
+      "Visible": true
+
+    },
+    {
+      "Asunto": "CASO 8496 - RECLAMO",
+      "Texto": "Estimados señores o señoras,<br><br>\n Quisiera consultar sobre mi seguro de auto. El 27 de Mayo  participé en una carrera de autos \n que se llevó a cabo para recaudar fondos para niños con discapacidades motoras. Durante esta carrera, \n hubo un accidente colectivo, donde mi auto sufrió daños menores. Quisiera consultar sobre mi \ncobertura con respecto a este evento. Si la respuesta es afirmativa, quisiera información sobre los pasos \n que debo seguir para activar mi seguro de vehículo.<br><br>\nGracias de antemano por su ayuda.\nAtentamente,<br>\n Micaela Harris",
+      "Complejo": false,
+      "TiempoEnvio": 2526,
+      "TiempoSolucion": 0,
+      "Respuestas": ["Micaela", "Harris", "BXD-008", "Plan Regular", "01/05/2022", 2, 2, 2],
       "Visible": true
     },
-
     {
       "Asunto": "CASO 8493 - RECLAMO URGENTE",
       "Texto": "Estimados señores o señora,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. Hace dos días, tuve un grave accidente\n automovilístico, donde sufrí un golpe en el brazo izquierdo. Me comuniqué con usted y enviaron un \n inspector para revisar lo sucedido. El Sr. August Marruecos, que vino a revisar el accidente, me dijo que\n la compañía de seguros trabajará para obtener una compensación por las lesiones y daños a mi vehículo. \n Sin embargo, hasta la fecha no se ha recibido ninguna comunicación por su parte. Quisiera saber si el \n seguro del vehículo que tengo con ustedes cubre esto. Si la respuesta es afirmativa, me gustaría recibir\n información sobre los pasos que debo seguir para utilizar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\n Atentamente, <br>\n Adrian Molina",
@@ -926,58 +933,6 @@
       "Visible": true
     },
 
-    {
-      "Asunto": "CASO 8494 - RECLAMO",
-      "Texto": "Estimados señores o señoras,<br><br>\n Quiero hacer una pregunta sobre mi seguro de automóvil. El 28 de Mayo noté una falla mecánica \n en el motor del auto, por lo que me gustaría tomar un servicio adicional para la asistencia del \n vehículo. Me gustaría saber si el seguro del vehículo que tengo con ustedes cubre esta avería. Si la respuesta \n es afirmativa, quisiera información sobre los pasos que debo seguir para activar mi seguro de vehículo.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente <br>\n Abraham Smith",
-      "Complejo": false,
-      "TiempoEnvio": 2392,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Abraham", "Smith", " BXD-009", "Plan Plata", "01/08/2022", 1, 2, 2],
-      "Visible": true
-
-    },
-
-    {
-      "Asunto": "CASO 8495 - RECLAMO",
-      "Texto": "Estimados señores o señora,<br><br>\n Hace dos días, en un viaje por carretera hacia el sur, choqué mi auto con otro auto y se rompieron los parachoques.\n El choque se produjo de noche y fue muy fuerte. Mi esposo y yo estábamos en el auto,\n ambos salimos ilesos. Quisiera saber si el seguro de vehículo que tengo en su empresa cubre este tipo \n de accidentes. Su respuesta me ayudará a hacer los arreglos necesarios.<br><br>\n Gracias por adelantado por tu respuesta.\n Atentamente, <br>\n Fernanda Santos",
-      "Complejo": true,
-      "TiempoEnvio": 2411,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Fernanda", "Santos", "BXD-013", "Plan Regular", "01/10/2022", 1, 2, "Mario Lezameta", "ERW - 1114", 1, 2],
-      "Reporte": "technical_report_6.png",
-      "Visible": true
-    },
-
-    {
-      "Asunto": "CASO 8496 - RECLAMO",
-      "Texto": "Estimados señores o señoras,<br><br>\n Quisiera consultar sobre mi seguro de auto. El 27 de Mayo  participé en una carrera de autos \n que se llevó a cabo para recaudar fondos para niños con discapacidades motoras. Durante esta carrera, \n hubo un accidente colectivo, donde mi auto sufrió daños menores. Quisiera consultar sobre mi \ncobertura con respecto a este evento. Si la respuesta es afirmativa, quisiera información sobre los pasos \n que debo seguir para activar mi seguro de vehículo.<br><br>\nGracias de antemano por su ayuda.\nAtentamente,<br>\n Micaela Harris",
-      "Complejo": false,
-      "TiempoEnvio": 2526,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Micaela", "Harris", "BXD-008", "Plan Regular", "01/05/2022", 2, 2, 2],
-      "Visible": true
-    },
-
-    {
-      "Asunto": "CASO 8497 - RECLAMO",
-      "Texto": "Estimados señores o señoras,<br><br>\n Tengo una duda sobre mi seguro de coche. El 26 de Mayo  tuve un accidente automovilístico en el que\n se dañó totalmente la perilla de la puerta de mi automóvil. De acuerdo con el informe del accidente,\n mi automóvil estaba sobrepasando el nivel de velocidad legal, y esta fue la principal causa del choque.\n Quisiera saber si el seguro del vehículo que tengo con ustedes cubre esto. A continuación, \n daré los pasos correspondientes.<br><br>\n Quedo a la espera de su amable respuesta.\nAtentamente,<br>\n Valeria Jimenez",
-      "Complejo": false,
-      "TiempoEnvio": 2867,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Valeria", "Jimenez", "BXD-006", "Plan Diamante", "01/03/2022", 2, 1, 2],
-      "Visible": true
-    },
-
-    {
-      "Asunto": "CASO 8498 - RECLAMO",
-      "Texto": "Estimados señores o señora,<br><br>\n Me gustaría preguntarle sobre mi seguro de automóvil. Ayer tuve un accidente automovilístico,\n donde sufrí un golpe en la pierna derecha. Me comuniqué con usted y enviaron un inspector para revisar\n lo sucedido. El Sr. Hels Minde, quien vino a revisar el accidente, me dijo que la compañía de \n seguros trabajará para obtener una compensación por mis lesiones y daños a mi vehículo. Sin embargo,\n hasta la fecha, no he recibido ninguna comunicación de ellos. Quisiera saber si el seguro del vehículo \n que tengo con ustedes cubre esto. Si es así, podría hacer los arreglos necesarios.<br><br>\nQuedo a la espera de su amable respuesta.\nAtentamente,<br>\nPaty Jimenez",
-      "Complejo": true,
-      "TiempoEnvio": 3024,
-      "TiempoSolucion": 0,
-      "Respuestas": ["Paty", "Jimenez", "BXD-010", "Plan Oro", "01/07/2022", 1, 1, "Jeremy Salas", "ERI-3024", 1, 1],
-      "Reporte": "technical_report_4.png",
-      "Visible": true
-    },
 
   ];
 
@@ -994,10 +949,50 @@
   let prev_case = 0;
   let cur_case = intr_list_id[0];
 
-  let unread_msg = 0;
+  let solved_cases = 0;
+  let var_goal = js_vars.goal;
+
+  var wip_title = document.getElementById('wip-title');
+    
+
+  // Actualiza la barra de progreso
+  function update_wip() {
+    solved_cases++ // Sumar 1 a la cantidad de casos resueltos
+
+    wip_title.textContent = `${solved_cases}/${case_list.length}`
+
+    var progress_bar = document.getElementById("myBar");
+    var goal = var_goal; // Meta
+    var number_of_cases = case_list.length; // Cantidad de casos
+    
+    // Calcular el progreso actual
+    var progreso = (solved_cases / number_of_cases) * 100;
+    
+    // Actualizar el valor de la barra de progreso
+    progress_bar.style.width = progreso + "%";
+    progress_bar.innerHTML = progreso.toFixed(0) + "%";
+    
+    // Cambiar el color de la barra de progreso según la meta
+    if (solved_cases < goal) {
+      progress_bar.classList.add("bg-danger");
+    } else if (solved_cases == goal) {
+      progress_bar.classList.remove("bg-danger");
+      progress_bar.classList.add("bg-success");
+    } else {
+      progress_bar.classList.remove("bg-danger", "bg-success");
+    }
+  }
 
   // Construye y renderiza la lista de casos
   function build_case() {
+
+    // Actualizar cantidad de estado resueltos
+    wip_title.textContent = `${solved_cases}/${case_list.length}`
+
+    // Actualizar cantidad de estado resueltos
+    var goal_title = document.getElementById('goal-title');
+    goal_title.textContent = `Meta: ${var_goal} casos`
+
     var case_container = document.getElementById('case-container');
     case_container.innerHTML = '';
 
@@ -1020,6 +1015,35 @@
         simple_template_copy = simple_template_copy.replaceAll('{case_asunto}', case_value.Asunto);
         case_container.innerHTML += simple_template_copy;
       }
+    }
+  }
+
+
+  //Mostrar el primer caso
+  function show_case() {
+    if (case_list.length) {
+      var first_case = document.getElementById('case-1');
+      first_case.style.display = 'block';
+    }
+  }
+
+  //Mostrar el siguiente caso
+  function show_next_case(case_id) {
+    // Ocultar el caso actual
+    var first_case = document.getElementById('case-' + case_id.toString());
+    first_case.style.display = 'none';
+
+    // Mostrar el siguiente caso
+    let next_case_id =  case_id + 1
+    var next_case = document.getElementById('case-' + next_case_id.toString());
+    next_case.style.display = 'block';
+    window.scrollTo(0, 0);
+
+    // Ocultar el boton de Siguiente caso para el ultimo caso
+    if (case_list.length == case_id + 1) {
+      let next_case_id = case_id + 1
+      var next_case = document.getElementById('next-case-btn-'+ next_case_id.toString());
+      next_case.style.display = 'none';
     }
   }
 
@@ -1046,7 +1070,7 @@
     }
   }
 
-  // Rendirza el temporizador en cuenta regresiva
+  // Renderiza el temporizador en cuenta regresiva
   // El limite de tiempo se define en timeout_seconds de la pagina TasksProgressBar
   function build_timer() {
     $('.otree-timer').hide();
@@ -1066,31 +1090,9 @@
     });
   }
 
-  // Retorna la hora en que se cumple el tiempo de envio del caso.
-  function case_send_time(id) {
-    let temp_time = new Date(start_time + case_list[id].TiempoEnvio * 1000);
-    timeHours = temp_time.getHours();
-    timeMinutes = temp_time.getMinutes().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
-    return timeHours + ':' + timeMinutes;
-  }
-
-  //Funcion que crea una alerta con el asunto del caso y tiempo de envio.
-  function create_alert(id) {
-    alert(case_send_time(id) + ' - ' + case_list[id].Asunto);
-    inbox = id;
-
-    let unread_msg_elem = document.getElementById('unread-msg');
-    unread_msg_elem.style.display = 'block'
-    unread_msg_elem.innerHTML = ++unread_msg;
-  }
-
-  // Renderiza alertas por cada caso cuando se cumple su tiempo de envio
+  // Actualiza la hora de inicio y urgencia de cada caso, asi como la hora de inicio del formulario
   function build_alert() {
-    for (var i = 1; i < case_list.length; i++) {
-      var case_value = case_list[i];
-      setTimeout(create_alert.bind(null, i), case_value.TiempoEnvio * 1000);
-    }
-    for (var i = 0; i < case_list.length; i++) {
+        for (var i = 0; i < case_list.length; i++) {
       var start_elem = document.getElementById('case_' + (i + 1).toString() + '_start_time');
       start_elem.value = case_list[i].TiempoEnvio;
       let urgent_elem = document.getElementById('case_' + (i + 1).toString() + '_urgent');
@@ -1158,47 +1160,6 @@
     return ans_list;
   }
 
-  // Calcula el progreso de un caso y retorna el porcentaje de avance en base a la cantidad de respuestas ingresadas
-  function case_progress(id) {
-    let result = case_result(id);
-    let progress = 0;
-    for (var i = 0; i < result.length; i++) {
-      if (result[i].toString() != '' && result[i].toString() != '-1') {
-        progress++;
-      }
-    }
-    return progress * 100.0 / result.length;
-  }
-
-  // Actualiza el UI del progreso de las tareas y los muestra en % y barra de progreso
-  function update_wip() {
-    let wip_elem = document.getElementById('wip-group');
-    let work_elem = `
-      <li class="list-group-item wip-elem" onclick="open_case({case-id})">
-        <p>{work-prog}</p>
-        <p>{case-msg}</p>
-      </li>
-    `;
-    wip_elem.innerHTML = '';
-    var width = 1;
-    var elem = document.getElementById("myBar");   
-
-    for (var i = 0; i <= wip; i++) {
-      if (case_list[i].Visible) {
-      let work_copy_elem = work_elem;
-      work_copy_elem = work_copy_elem.replaceAll('{case-id}', i);
-      work_copy_elem = work_copy_elem.replaceAll('{case-msg}', case_list[i].Asunto);
-      work_copy_elem = work_copy_elem.replaceAll('{work-prog}', case_progress(i).toFixed(0).toString() + ' %');
-      wip_elem.innerHTML += work_copy_elem;
-      }
-      console.log(case_progress(i).toFixed(0).toString() + ' %');
-      console.log(case_list.length, case_progress(i).toFixed(0), (case_progress(i).toFixed(0)/case_list.length.toFixed(0).toString() + ' %'));
-      width =  (case_progress(i).toFixed(0)/case_list.length).toFixed(0);
-      elem.style.width = width + '%'; 
-      console.log("sad", width, elem.style.width);
-    }
-  }
-
   // Funcion que se ejecuta al ingresar un valor en los campos de un caso.
   // Actualiza el tiempo de solución del caso (hora de inicio - hora actual) cuando se ingresa un valor por primera
   // vez en los campos del caso, registra el tiempo en segundos.
@@ -1218,7 +1179,6 @@
       create_intr(id) 
     }
 
-    update_wip();
   }
 
  // Asigna la funcion input_event a los campos de cada caso
@@ -1242,13 +1202,11 @@
   // Funcion principal que renderiza el UI y ejecuta las funciones
   function build_page() {
     build_case();
+    show_case()
     build_extra();
     build_timer();
     build_alert();
     build_event();
-    update_inbox();
-    update_wip();
-    open_case(0);
   }
 
   function create_intr(id) {
@@ -1276,95 +1234,7 @@
     cur_case = id + 1;
   }
 
-  function open_case(id) {
-    close_inbox(false);
-    create_intr(id);
-    for (var i = 0; i < case_list.length; i++) {
-      let case_id = 'case-' + (i + 1).toString();
-      let case_elem = document.getElementById(case_id);
-      if (i == id) {
-        case_elem.style.display = 'block';
-      } else {
-        case_elem.style.display = 'none';
-      }
-    }
-  }
 
-  function open_inbox() {
-    create_intr(-1);
-
-    let open_inbox_elem = document.getElementsByClassName('open-inbox');
-    let close_inbox_elem = document.getElementsByClassName('close-inbox');
-
-    for (var i = 0; i < close_inbox_elem.length; i++) {
-      close_inbox_elem[i].style.display = 'none';
-    }
-
-    for (var i = 0; i < open_inbox_elem.length; i++) {
-      open_inbox_elem[i].style.display = 'block';
-    }
-
-    wip = inbox;
-
-    update_inbox();
-    update_wip();
-
-    let unread_msg_elem = document.getElementById('unread-msg');
-    unread_msg_elem.style.display = 'none';
-    unread_msg = 0;
-  }
-
-  function close_inbox(intr = true) {
-    if (intr) {
-      create_intr(prev_case);
-    }
-
-    let open_inbox_elem = document.getElementsByClassName('open-inbox');
-    let close_inbox_elem = document.getElementsByClassName('close-inbox');
-
-    for (var i = 0; i < close_inbox_elem.length; i++) {
-      close_inbox_elem[i].style.display = 'block';
-    }
-
-    for (var i = 0; i < open_inbox_elem.length; i++) {
-      open_inbox_elem[i].style.display = 'none';
-    }
-  }
-
-  function update_inbox() {
-    let inbox_elem = document.getElementById('email-group');
-    let email_elem = `
-      <li class="list-group-item email-msg" onclick="open_case({case-id})">
-        <p>{case-msg}</p>
-      </li>
-    `;
-    inbox_elem.innerHTML = '';
-    for (var i = 0; i <= inbox; i++) {
-      if(case_list[i].Visible) {
-      let email_copy_elem = email_elem;
-      email_copy_elem = email_copy_elem.replaceAll('{case-id}', i);
-      email_copy_elem = email_copy_elem.replaceAll('{case-msg}', case_send_time(i) + ' - ' + case_list[i].Asunto);
-      inbox_elem.innerHTML += email_copy_elem;
-      }
-    }
-  }
-
- 
-
-  function move() {
-    var elem = document.getElementById("myBar");   
-    var width = 1;
-    var id = setInterval(frame, 10);
-    function frame() {
-        if (width >= 100) {
-        clearInterval(id);
-        } else {
-        width++; 
-        elem.style.width = width + '%'; 
-        }
-    }
-  }
-  
   // Retorna una lista con los nombres de las preguntas de un caso en especifico
   function case_question(id) {
     let case_elem = document.getElementById('case-' + (id + 1).toString());
@@ -1423,16 +1293,25 @@
   function case_validate_button(case_id) {
     
     if (case_validate(case_id - 1)) {
-      let correct_elem = document.getElementById('alert-correct-answer');
+      update_wip()
+      //Renderiza la alerta de respuestas correctas por 5 segundos
+      let correct_elem = document.getElementById(case_id.toString() + '-alert-correct-answer');
       correct_elem.style.display = 'block';
+      setTimeout(function () { correct_elem.style.display = 'none'; }, 5 * 1000);
+
       //case_list.splice(case_id - 1, 1);
      
       case_list[case_id -1].Visible = false
-      update_wip();
-      update_inbox();
-      setTimeout(function () { correct_elem.style.display = 'none'; }, 5 * 1000);
+
+      // Registra los el tiempo en que se resolvio el caso
       var end_elem = document.getElementById('case_' + case_id.toString() + '_end_time');
       end_elem.value = ((Date.now() - start_time) / 1000);
+      
+      // Habilita el boton de Siguiente caso
+      var next_case = document.getElementById('next-case-btn-' + case_id.toString());
+      next_case.disabled = false;
+
+      // Valida si todas las respuestas con correctas para mostrar el boton de Finalizar
       let all_correct = true;
       for (var i = 0; i < case_list.length; i++) {
         if (i == (case_id - 1)) {
@@ -1451,7 +1330,7 @@
         //palabra
       }
     } else {
-      let error_elem = document.getElementById('alert-wrong-answer');
+      let error_elem = document.getElementById(case_id.toString() + '-alert-wrong-answer');
       error_elem.style.display = 'block';
       setTimeout(function () { error_elem.style.display = 'none'; }, 5 * 1000);
       let error_count_elem = document.getElementById('case_' + case_id.toString() + '_error_count');
@@ -1497,8 +1376,10 @@
 </div>
 
 <!-- Boton se muestra cuando todos los casos se respondieron de forma correcta -->
-<button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
-  Siguiente
-</button>
+<div class="d-flex flex-row-reverse">
+  <button onclick="validate_answers()" class="otree-btn-next btn btn-success" id="submit-button" style="display: none;">
+    Finalizar
+  </button>
+</div>
 
 {{ endblock }}
